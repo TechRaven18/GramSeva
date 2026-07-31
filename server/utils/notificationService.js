@@ -6,47 +6,33 @@ const getTransporter = async () => {
   // Option 1: Custom SMTP (Brevo, Mailtrap, SendGrid, etc.)
   if (process.env.SMTP_HOST && process.env.SMTP_USER) {
     return nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
+      host: process.env.SMTP_HOST.trim(),
       port: Number(process.env.SMTP_PORT) || 587,
       secure: Number(process.env.SMTP_PORT) === 465,
       auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
+        user: process.env.SMTP_USER.trim(),
+        pass: (process.env.SMTP_PASS || '').trim()
       }
     });
   }
 
-  // Option 2: Real Gmail SMTP (Requires GMAIL_USER and GMAIL_PASS App Password)
+  // Option 2: Real Gmail SMTP (Requires GMAIL_USER and 16-char GMAIL_PASS App Password)
   if (process.env.GMAIL_USER && process.env.GMAIL_PASS) {
+    const cleanUser = process.env.GMAIL_USER.trim();
+    const cleanPass = process.env.GMAIL_PASS.replace(/\s+/g, '');
     return nodemailer.createTransport({
-      service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 465,
+      secure: true,
       auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_PASS
+        user: cleanUser,
+        pass: cleanPass
       }
     });
   }
 
-  // Option 3: Automatic Ethereal Live Test Inbox
-  if (!testTransporter) {
-    try {
-      const testAccount = await nodemailer.createTestAccount();
-      testTransporter = nodemailer.createTransport({
-        host: 'smtp.ethereal.email',
-        port: 587,
-        secure: false,
-        auth: {
-          user: testAccount.user,
-          pass: testAccount.pass
-        }
-      });
-      console.log(`[ETHEREAL MAIL GATEWAY READY] Created test inbox: ${testAccount.user}`);
-    } catch (err) {
-      console.error('[ETHEREAL SETUP ERROR]', err.message);
-    }
-  }
-
-  return testTransporter;
+  // Fast Cloud Fallback: If no SMTP credentials provided, return null for instant simulated dispatch (0ms delay)
+  return null;
 };
 
 /**
