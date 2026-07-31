@@ -93,8 +93,7 @@ const sendRegistrationOTP = async (req, res) => {
       success: true,
       message: `6-Digit OTP sent successfully to your Email inbox (${cleanEmail}).`,
       email: cleanEmail,
-      previewUrl: emailResult?.previewUrl,
-      otp: otpCode
+      previewUrl: emailResult?.previewUrl
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
