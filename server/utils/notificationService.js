@@ -16,18 +16,17 @@ const getTransporter = async () => {
     });
   }
 
-  // Option 2: Real Gmail SMTP (Requires GMAIL_USER and 16-char GMAIL_PASS App Password)
+  // Option 2: Real Gmail SMTP via service: 'gmail' (Render STARTTLS compatible)
   if (process.env.GMAIL_USER && process.env.GMAIL_PASS) {
     const cleanUser = process.env.GMAIL_USER.trim();
     const cleanPass = process.env.GMAIL_PASS.replace(/\s+/g, '');
     return nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 465,
-      secure: true,
+      service: 'gmail',
       auth: {
         user: cleanUser,
         pass: cleanPass
-      }
+      },
+      connectionTimeout: 10000
     });
   }
 
