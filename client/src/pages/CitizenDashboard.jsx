@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useSocket } from '../context/SocketContext';
 import { complaintAPI } from '../services/api';
 import { PlusCircle, Award, Clock, FileText, CheckCircle2, AlertCircle, Eye, MapPin } from 'lucide-react';
 
 export default function CitizenDashboard() {
   const { user } = useAuth();
+  const { socket } = useSocket();
   const [complaints, setComplaints] = useState([]);
   const [filterStatus, setFilterStatus] = useState('ALL');
   const [loading, setLoading] = useState(true);
@@ -13,6 +15,35 @@ export default function CitizenDashboard() {
   useEffect(() => {
     fetchComplaints();
   }, [filterStatus]);
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleCreated = (newComplaint) => {
+      setComplaints(prev => [newComplaint, ...prev.filter(c => c._id !== newComplaint._id)]);
+    };
+
+    const handleUpdated = (updatedComplaint) => {
+      setComplaints(prev => {
+        const exists = prev.some(c => c._id === updatedComplaint._id);
+        if (exists) {
+          if (['COMPLETED', 'REJECTED'].includes(updatedComplaint.status)) {
+            return prev.filter(c => c._id !== updatedComplaint._id);
+          }
+          return prev.map(c => c._id === updatedComplaint._id ? updatedComplaint : c);
+        }
+        return prev;
+      });
+    };
+
+    socket.on('complaint:created', handleCreated);
+    socket.on('complaint:updated', handleUpdated);
+
+    return () => {
+      socket.off('complaint:created', handleCreated);
+      socket.off('complaint:updated', handleUpdated);
+    };
+  }, [socket]);
 
   const fetchComplaints = async () => {
     setLoading(true);
