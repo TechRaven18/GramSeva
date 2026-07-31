@@ -1,0 +1,200 @@
+1. GramSeva is a full-stack web application developed to digitize the complaint management system of Gram Panchayats.
+2. The project aims to bridge the communication gap between citizens and the Panchayat administration.
+3. Citizens can register themselves on the platform.
+4. Registered users can securely log in to the system.
+5. Authentication ensures that only authorized users can access their accounts.
+6. Passwords are securely stored in encrypted form.
+7. JWT authentication is used for secure session management.
+8. The application follows a client-server architecture.
+9. React.js is used to develop the frontend.
+10. Node.js is used as the backend runtime.
+11. Express.js is used to build REST APIs.
+12. MongoDB is used as the database.
+13. Mongoose is used for database interaction.
+14. The project follows the MVC architecture.
+15. MVC stands for Model View Controller.
+16. Models represent the database collections.
+17. Controllers contain the business logic.
+18. Routes define the API endpoints.
+19. The frontend communicates with the backend using REST APIs.
+20. Axios is used for making API requests.
+21. Users can submit complaints through the application.
+22. Each complaint contains a title.
+23. Each complaint contains a detailed description.
+24. Users can upload complaint images.
+25. Images help administrators understand the issue better.
+26. Every complaint is linked to a specific Panchayat.
+27. Every complaint belongs to a registered citizen.
+28. Each complaint has a unique complaint ID.
+29. The complaint ID is generated automatically.
+30. Utility functions generate readable IDs.
+31. Complaints are stored in MongoDB.
+32. Every complaint has a status.
+33. Initial status is Pending.
+34. Admin can change the complaint status.
+35. Status can become Accepted.
+36. Status can become In Progress.
+37. Status can become Resolved.
+38. Status can become Rejected.
+39. Every status change is stored in StatusHistory.
+40. StatusHistory keeps a timeline of updates.
+41. Citizens can view the latest complaint status.
+42. Citizens can also view previous status changes.
+43. The project supports admin login.
+44. Admin credentials are securely verified.
+45. Admin dashboard displays all complaints.
+46. Admin dashboard displays complaint statistics.
+47. Admin can search complaints.
+48. Admin can filter complaints.
+49. Admin can update complaint status.
+50. Admin can delete invalid complaints.
+51. Admin actions are recorded in AuditLog.
+52. AuditLog improves transparency.
+53. AuditLog records important system events.
+54. AuditLog stores timestamps.
+55. AuditLog stores user information.
+56. Every login can be logged.
+57. Every status update can be logged.
+58. Every deletion can be logged.
+59. Location management is implemented.
+60. Users first select a district.
+61. Then they select a block.
+62. Then they select a Panchayat.
+63. Finally they select a village.
+64. Location data is fetched dynamically.
+65. Dropdowns are dependent on previous selections.
+66. MongoDB stores Panchayat data.
+67. Panchayat data was seeded into MongoDB.
+68. Seed scripts automate database initialization.
+69. seedAdmin.js creates the default admin.
+70. Database seeding reduces manual work.
+71. The backend exposes REST APIs.
+72. APIs follow standard HTTP methods.
+73. GET retrieves data.
+74. POST creates new data.
+75. PUT updates existing data.
+76. DELETE removes unwanted data.
+77. Middleware validates JWT tokens.
+78. Middleware protects private routes.
+79. Unauthorized users receive an error.
+80. Error handling improves stability.
+81. Controllers separate logic from routes.
+82. Routes remain clean and readable.
+83. Models define schemas.
+84. Schemas enforce data validation.
+85. Validation prevents invalid data.
+86. Email uniqueness is maintained.
+87. Complaint IDs remain unique.
+88. MongoDB ObjectId links collections.
+89. User model stores citizen details.
+90. User model stores admin details.
+91. User model stores email.
+92. User model stores password.
+93. User model stores phone number.
+94. User model stores village details.
+95. Complaint model stores issue information.
+96. Complaint model stores uploaded images.
+97. Complaint model stores timestamps.
+98. Reward model stores citizen rewards.
+99. Reward points encourage participation.
+100. Reward history can be displayed.
+101. StatusHistory stores every complaint update.
+102. AuditLog records every major action.
+103. Location model stores Panchayat information.
+104. ID Generator creates readable IDs.
+105. Utility functions improve code reuse.
+106. Configuration files manage database connections.
+107. Environment variables store sensitive credentials.
+108. MongoDB URI is stored securely.
+109. JWT Secret is stored securely.
+110. dotenv loads environment variables.
+111. Git is used for version control.
+112. GitHub hosts the source code.
+113. Collaborators contribute through GitHub.
+114. Branches support parallel development.
+115. Pull requests simplify collaboration.
+116. Commits record project history.
+117. README explains project usage.
+118. License defines project permissions.
+119. API testing is done using Postman.
+120. Backend responses use JSON.
+121. JSON improves interoperability.
+122. Express Router organizes APIs.
+123. Controllers remain modular.
+124. Modular code improves maintainability.
+125. Folder structure is clean.
+126. Backend is scalable.
+127. Frontend is responsive.
+128. React components improve reusability.
+129. Hooks manage application state.
+130. Routing improves navigation.
+131. Login page authenticates users.
+132. Registration page creates accounts.
+133. Dashboard displays complaint summaries.
+134. Complaint page accepts user reports.
+135. Admin dashboard manages all requests.
+136. Statistics improve decision making.
+137. Search improves usability.
+138. Filters improve complaint management.
+139. Pagination improves performance.
+140. Database indexing speeds up queries.
+141. Express middleware improves security.
+142. CORS allows frontend communication.
+143. JSON parser processes requests.
+144. Logging simplifies debugging.
+145. Error responses follow standards.
+146. HTTP status codes are properly used.
+147. 200 indicates success.
+148. 201 indicates resource creation.
+149. 400 indicates bad request.
+150. 401 indicates unauthorized access.
+151. 403 indicates forbidden access.
+152. 404 indicates resource not found.
+153. 500 indicates server error.
+154. Async functions improve efficiency.
+155. Await simplifies asynchronous programming.
+156. Promises manage API calls.
+157. Try-catch handles exceptions.
+158. MongoDB Atlas hosts the database.
+159. Cloud database ensures availability.
+160. User experience is prioritized.
+161. Clean UI improves accessibility.
+162. Responsive design supports mobile devices.
+163. Complaint workflow is simplified.
+164. Transparency improves governance.
+165. Citizens receive faster responses.
+166. Administrators manage complaints efficiently.
+167. Manual paperwork is reduced.
+168. Digital records improve reliability.
+169. Data remains centrally stored.
+170. Future updates can add notifications.
+171. SMS integration can be added.
+172. Email notifications can be added.
+173. AI image classification can be integrated.
+174. CNN can classify complaint images.
+175. Fake complaint detection can be implemented.
+176. Priority-based complaint handling can be added.
+177. GIS mapping can improve visualization.
+178. Analytics dashboard can be expanded.
+179. Mobile application can be developed.
+180. OCR can extract complaint details.
+181. Voice complaint support can be added.
+182. Chatbot assistance can improve accessibility.
+183. Multi-language support can be implemented.
+184. Security remains a priority.
+185. Authentication protects user accounts.
+186. Authorization controls permissions.
+187. Validation prevents invalid inputs.
+188. Modular architecture supports future enhancements.
+189. MVC improves project organization.
+190. REST APIs ensure interoperability.
+191. MongoDB provides flexible storage.
+192. React delivers a dynamic user interface.
+193. Node.js enables high-performance backend execution.
+194. Express simplifies API development.
+195. GramSeva modernizes Panchayat complaint management.
+196. The project promotes digital governance.
+197. The system improves transparency and accountability.
+198. The architecture is scalable and maintainable.
+199. The project demonstrates strong full-stack development skills.
+200. GramSeva is a practical solution for efficient rural grievance management.
