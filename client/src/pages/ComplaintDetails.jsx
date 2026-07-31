@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useSocket } from '../context/SocketContext';
 import { complaintAPI } from '../services/api';
 import StatusTimeline from '../components/StatusTimeline';
 import { Sparkles, MapPin, User, Shield, CheckCircle, AlertTriangle, ArrowLeft, Send, Award, RefreshCw, Lock } from 'lucide-react';
@@ -9,6 +10,7 @@ export default function ComplaintDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user, role } = useAuth();
+  const { socket } = useSocket();
 
   const [complaint, setComplaint] = useState(null);
   const [history, setHistory] = useState([]);
@@ -33,6 +35,41 @@ export default function ComplaintDetails() {
   useEffect(() => {
     fetchDetails();
   }, [id]);
+
+  useEffect(() => {
+    if (!socket || !id) return;
+
+    socket.emit('join:complaint', id);
+
+    const handleComplaintUpdated = (updatedComplaint) => {
+      if (updatedComplaint && updatedComplaint._id === id) {
+        setComplaint(updatedComplaint);
+        complaintAPI.getDetails(id).then(res => {
+          setHistory(res.history || []);
+        }).catch(() => {});
+      }
+    };
+
+    const handleCommentAdded = (data) => {
+      if (data && data.complaintId === id) {
+        if (data.complaint) {
+          setComplaint(data.complaint);
+        }
+        complaintAPI.getDetails(id).then(res => {
+          setComplaint(res.complaint);
+          setHistory(res.history || []);
+        }).catch(() => {});
+      }
+    };
+
+    socket.on('complaint:updated', handleComplaintUpdated);
+    socket.on('comment:added', handleCommentAdded);
+
+    return () => {
+      socket.off('complaint:updated', handleComplaintUpdated);
+      socket.off('comment:added', handleCommentAdded);
+    };
+  }, [socket, id]);
 
   const fetchDetails = async () => {
     setLoading(true);
