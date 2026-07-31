@@ -116,7 +116,8 @@ export default function Register() {
 
       setReceivedOtpInfo(res);
       setStep(2);
-      setSuccessMsg(`Verification OTP code sent to your Email Inbox (${email}).`);
+      const otpDisplay = res.otp ? ` (Verification Code: ${res.otp})` : '';
+      setSuccessMsg(`Verification OTP code sent to your Email Inbox (${email}).${otpDisplay}`);
     } catch (err) {
       setError(err.message || 'Failed to send OTP. This Email Address might already be registered for a Citizen.');
     } finally {
