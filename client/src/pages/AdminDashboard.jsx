@@ -118,22 +118,29 @@ export default function AdminDashboard() {
   };
 
   const handleToggleStaff = async (id) => {
+    // Optimistic instant UI update (0 ms response)
+    setStaffList(prev => prev.map(s => s._id === id ? { ...s, isActive: !s.isActive } : s));
+
     try {
       await adminAPI.toggleStaffStatus(id);
-      fetchAdminData();
     } catch (err) {
-      alert(err.message);
+      // Rollback on error
+      setStaffList(prev => prev.map(s => s._id === id ? { ...s, isActive: !s.isActive } : s));
+      alert(err.message || 'Could not update staff status.');
     }
   };
 
   const handleDeleteStaff = async (id, name, email) => {
     if (window.confirm(`⚠️ Delete Staff Account Permanently?\n\nStaff Name: ${name}\nEmail / User ID: ${email}\n\nAre you sure you want to delete this staff member? This will permanently delete their account from the database.`)) {
+      // Instant local removal (0 ms UI response)
+      setStaffList(prev => prev.filter(s => s._id !== id));
+
       try {
-        const res = await adminAPI.deleteStaff(id);
-        alert(`✓ ${res.message}`);
-        fetchAdminData();
+        await adminAPI.deleteStaff(id);
       } catch (err) {
-        alert(`❌ ${err.message}`);
+        // Rollback on error if API fails
+        fetchAdminData();
+        alert(`❌ ${err.message || 'Could not delete staff account.'}`);
       }
     }
   };
