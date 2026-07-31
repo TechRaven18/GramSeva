@@ -17,7 +17,7 @@ const seedHardcodedUsers = async () => {
 
     // 1. Seed Hardcoded Admin User from .env
     const adminEmail = process.env.ADMIN_EMAIL || 'admin@gramseva.in';
-    const adminPass = process.env.ADMIN_PASSWORD || 'AdminPass@123';
+    const adminPass = process.env.ADMIN_PASSWORD || '123456';
     const hashedAdminPass = await bcrypt.hash(adminPass, 10);
 
     let adminExists = await User.findOne({ email: adminEmail, role: 'ADMIN' });
@@ -38,9 +38,12 @@ const seedHardcodedUsers = async () => {
       });
       console.log(`✅ [HARDCODED TEST ACCOUNT] Created Admin: ${adminEmail} / ${adminPass}`);
     } else {
-      adminExists.password = hashedAdminPass;
-      await adminExists.save();
-      console.log(`✓ [HARDCODED TEST ACCOUNT] Updated & Verified Admin: ${adminEmail} / ${adminPass}`);
+      const match = await bcrypt.compare(adminPass, adminExists.password);
+      if (!match) {
+        adminExists.password = hashedAdminPass;
+        await adminExists.save();
+        console.log(`✓ [ADMIN ACCOUNT] Password updated: ${adminEmail}`);
+      }
     }
 
     // 2. Seed Hardcoded Staff User
@@ -58,21 +61,17 @@ const seedHardcodedUsers = async () => {
           panchayat: 'Ranchi Sadar',
           panchayatCode: 'RAN-SAD-01',
           type: 'PANCHAYAT',
-          villages: ['Morabadi', 'Kanke Road', 'Bariatu', 'Lalpur']
+          state: 'Jharkhand'
         });
       }
 
       await User.create({
-        name: 'Subrata Kumar (Field Staff)',
+        name: 'Jurisdiction Officer (Ranchi Sadar)',
         email: 'staff@gramseva.in',
+        mobile: '8888888888',
         password: hashedStaffPass,
         role: 'STAFF',
-        jurisdiction: {
-          district: 'Ranchi',
-          block: 'Ranchi Sadar',
-          panchayat: 'Ranchi Sadar',
-          jurisdictionId: jur._id
-        },
+        assignedJurisdictions: [jur._id],
         address: {
           district: 'Ranchi',
           block: 'Ranchi Sadar',
@@ -82,11 +81,14 @@ const seedHardcodedUsers = async () => {
           state: 'Jharkhand'
         }
       });
-      console.log('✅ [HARDCODED TEST ACCOUNT] Created Staff: staff@gramseva.in / Password@123');
+      console.log('✅ [TEST ACCOUNT] Created Staff: staff@gramseva.in');
     } else {
-      staffExists.password = hashedStaffPass;
-      await staffExists.save();
-      console.log('✓ [HARDCODED TEST ACCOUNT] Updated & Verified Staff: staff@gramseva.in / Password@123');
+      const match = await bcrypt.compare(staffPass, staffExists.password);
+      if (!match) {
+        staffExists.password = hashedStaffPass;
+        await staffExists.save();
+        console.log('✓ [TEST ACCOUNT] Updated Staff password: staff@gramseva.in');
+      }
     }
 
     // 3. Seed Hardcoded Citizen User
@@ -95,8 +97,9 @@ const seedHardcodedUsers = async () => {
     let citizenExists = await User.findOne({ email: 'citizen@gramseva.in', role: 'CITIZEN' });
     if (!citizenExists) {
       await User.create({
-        name: 'Neeraj Sharma',
+        name: 'Citizen Demo User',
         email: 'citizen@gramseva.in',
+        mobile: '7777777777',
         password: hashedCitizenPass,
         role: 'CITIZEN',
         rewardCoins: 40,
@@ -109,11 +112,14 @@ const seedHardcodedUsers = async () => {
           state: 'Jharkhand'
         }
       });
-      console.log('✅ [HARDCODED TEST ACCOUNT] Created Citizen: citizen@gramseva.in / Password@123');
+      console.log('✅ [TEST ACCOUNT] Created Citizen: citizen@gramseva.in');
     } else {
-      citizenExists.password = hashedCitizenPass;
-      await citizenExists.save();
-      console.log('✓ [HARDCODED TEST ACCOUNT] Updated & Verified Citizen: citizen@gramseva.in / Password@123');
+      const match = await bcrypt.compare(citizenPass, citizenExists.password);
+      if (!match) {
+        citizenExists.password = hashedCitizenPass;
+        await citizenExists.save();
+        console.log('✓ [TEST ACCOUNT] Updated Citizen password: citizen@gramseva.in');
+      }
     }
   } catch (error) {
     console.error('❌ [SEED ERROR]', error.message);
