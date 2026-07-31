@@ -39,6 +39,63 @@ const getTransporter = async () => {
  */
 const sendRealEmail = async ({ to, subject, html, text }) => {
   try {
+    // 1. Resend HTTP API (100% Cloud Compatible on Render - Port 443 HTTPS)
+    if (process.env.RESEND_API_KEY) {
+      try {
+        const res = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.RESEND_API_KEY.trim()}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            from: process.env.EMAIL_FROM || 'GramSeva Portal <onboarding@resend.dev>',
+            to: [to],
+            subject,
+            html: html || `<p>${text}</p>`,
+            text
+          })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          console.log(`[RESEND HTTP SUCCESS] Real Email sent to ${to}. ID: ${data.id}`);
+          return { success: true, messageId: data.id };
+        }
+        console.warn(`[RESEND API NOTICE: ${data.message || JSON.stringify(data)}]`);
+      } catch (resendErr) {
+        console.warn(`[RESEND API ERROR: ${resendErr.message}]`);
+      }
+    }
+
+    // 2. Brevo (Sendinblue) HTTP API (100% Cloud Compatible on Render - Port 443 HTTPS)
+    if (process.env.BREVO_API_KEY) {
+      try {
+        const res = await fetch('https://api.brevo.com/v3/smtp/email', {
+          method: 'POST',
+          headers: {
+            'api-key': process.env.BREVO_API_KEY.trim(),
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            sender: { name: 'GramSeva Portal', email: process.env.GMAIL_USER || 'no-reply@gramseva.in' },
+            to: [{ email: to }],
+            subject,
+            htmlContent: html || `<p>${text}</p>`,
+            textContent: text
+          })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          console.log(`[BREVO HTTP SUCCESS] Real Email sent to ${to}. MessageId: ${data.messageId}`);
+          return { success: true, messageId: data.messageId };
+        }
+        console.warn(`[BREVO API NOTICE: ${data.message || JSON.stringify(data)}]`);
+      } catch (brevoErr) {
+        console.warn(`[BREVO API ERROR: ${brevoErr.message}]`);
+      }
+    }
+
+    // 3. Fallback: SMTP Transporter (Gmail / Custom SMTP)
     const transporter = await getTransporter();
     
     if (!transporter) {
