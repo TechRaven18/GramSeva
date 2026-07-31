@@ -1,4 +1,5 @@
-const API_BASE = '/api';
+const API_HOST = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:5002' : '');
+const API_BASE = `${API_HOST}/api`;
 
 const getHeaders = (isFormData = false) => {
   const token = localStorage.getItem('panchayat_token');
