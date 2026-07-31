@@ -1,7 +1,3 @@
-# GramSeva
-Full-stack e-governance platform for Panchayat &amp; Municipality grievance reporting, tracking, and resolution.
-
-
 <div align="center">
 
 # 🏛️ GramSeva — Panchayat & Municipality Civic Issue Management System
@@ -34,43 +30,43 @@ Full-stack e-governance platform for Panchayat &amp; Municipality grievance repo
 
 ```mermaid
 graph TD
-    subgraph Client Layer (React 18 + Vite)
-        A[Citizen Portal]
-        B[Staff Dashboard]
-        C[Admin Control Panel]
+    subgraph Client_Layer ["Client Layer"]
+        A["Citizen Portal"]
+        B["Staff Dashboard"]
+        C["Admin Control Panel"]
     end
 
-    subgraph Transport & Security
-        D[Socket.IO WebSockets]
-        E[REST API Client / Axios]
-        F[JWT Authentication & Bcrypt]
+    subgraph Transport_Security ["Transport and Security"]
+        D["Socket.IO WebSockets"]
+        E["REST API Client"]
+        F["JWT Auth and Bcrypt"]
     end
 
-    subgraph Backend Services (Node.js + Express)
-        G[Express Server API Engine]
-        H[Cloudinary CDN Service]
-        I[Native Priority Classifier Engine]
-        J[Nodemailer SMTP Dispatch]
+    subgraph Backend_Services ["Backend Services"]
+        G["Express Server Engine"]
+        H["Cloudinary CDN Service"]
+        I["Native Priority Classifier"]
+        J["Nodemailer SMTP Dispatch"]
     end
 
-    subgraph Database Layer
-        K[(MongoDB Atlas Cloud Cluster)]
+    subgraph Database_Layer ["Database Layer"]
+        K[("MongoDB Atlas Cloud Database")]
     end
 
-    A -->|Live Events| D
-    B -->|Live Events| D
-    C -->|Live Events| D
-    A -->|HTTP REST| E
-    B -->|HTTP REST| E
-    C -->|HTTP REST| E
+    A --> D
+    B --> D
+    C --> D
+    A --> E
+    B --> E
+    C --> E
 
     E --> F
     F --> G
 
-    G -->|Zero-Latency Uploads| H
-    G -->|Rule Evaluation| I
-    G -->|Real Email Alerts| J
-    G -->|Mongoose ODM| K
+    G --> H
+    G --> I
+    G --> J
+    G --> K
 ```
 
 ---
@@ -81,33 +77,33 @@ graph TD
 sequenceDiagram
     autonumber
     actor Citizen
-    participant ClientApp as React SPA
-    participant Server as Express REST API
-    participant Socket as Socket.IO Engine
+    participant ClientApp as React SPA Client
+    participant Server as Express REST API Engine
+    participant Socket as Socket.IO WebSockets
     actor Staff
-    participant DB as MongoDB Atlas
+    participant DB as MongoDB Atlas Database
 
-    Citizen->>ClientApp: Submit Complaint + Photo Evidence
-    ClientApp->>Server: POST /api/complaints (Multipart)
-    Server->>Server: Upload to Cloudinary CDN & Compute Priority
-    Server->>DB: Save Complaint Record (Status: PENDING)
-    Server->>Socket: Emit complaint:created (Jurisdiction Room)
-    Socket-->>Staff: Live Alert on Staff Dashboard (0ms refresh)
-    
-    Staff->>Server: PUT /api/complaints/:id/status (Status: NEEDS_INFO)
-    Server->>DB: Update Status & Log Audit Trail
-    Server->>Socket: Emit complaint:updated (Citizen Room)
-    Socket-->>Citizen: Unlock Reply Form + Banner Alert
+    Citizen->>ClientApp: Submit Complaint with Photo Evidence
+    ClientApp->>Server: Send POST Request to /api/complaints
+    Server->>Server: Upload to Cloudinary CDN and Compute Priority
+    Server->>DB: Save Complaint Record with PENDING Status
+    Server->>Socket: Broadcast complaint:created to Jurisdiction Room
+    Socket-->>Staff: Live Alert on Staff Dashboard Queue
 
-    Citizen->>ClientApp: Send Reply Message & Attachment
-    ClientApp->>Server: POST /api/complaints/:id/comment
-    Server->>DB: Save Comment & Re-set Status to PENDING
-    Server->>Socket: Emit comment:added & complaint:updated
+    Staff->>Server: Send PUT Request with NEEDS_INFO Status
+    Server->>DB: Update Status and Write Audit History
+    Server->>Socket: Broadcast complaint:updated to Citizen Room
+    Socket-->>Citizen: Unlock Reply Form and Display Alert Banner
 
-    Staff->>Server: PUT /api/complaints/:id/status (Status: COMPLETED)
-    Server->>DB: Credit +20 Reward Coins to Citizen Account
-    Server->>Socket: Emit reward:updated (Citizen Room)
-    Socket-->>Citizen: Update Live Header Coins Badge (+20)
+    Citizen->>ClientApp: Send Reply Message and Evidence Photo
+    ClientApp->>Server: Send POST Request to /api/complaints/:id/comment
+    Server->>DB: Save Message and Re-set Status to PENDING
+    Server->>Socket: Broadcast comment:added and complaint:updated
+
+    Staff->>Server: Send PUT Request with COMPLETED Status
+    Server->>DB: Credit 20 Reward Coins to Citizen Account
+    Server->>Socket: Broadcast reward:updated to Citizen Room
+    Socket-->>Citizen: Live Header Coins Badge Incremented by 20
 ```
 
 ---
@@ -116,12 +112,84 @@ sequenceDiagram
 
 ```mermaid
 flowchart LR
-    A[Citizen Complaint Completed] -->|System Credit| B[+20 Reward Coins]
-    B --> C{Coin Balance Multiples of 100?}
-    C -->|Yes| D[Select Partner Merchant Store]
-    D --> E[Generate Counter Coupon]
-    E -->|Instant Debit| F[Immediate Balance Debit & Email OTP]
-    F --> G[Present Coupon at Store Counter]
+    A["Citizen Complaint Completed"] --> B["Credit 20 Reward Coins"]
+    B --> C{"Check Balance Multiples of 100"}
+    C -->|Valid| D["Select Partner Merchant Store"]
+    D --> E["Generate Discount Voucher"]
+    E --> F["Debit Coins Balance and Send OTP"]
+    F --> G["Present Voucher at Store Counter"]
+```
+
+---
+
+## 📁 Repository Directory Structure
+
+```ascii
+panchayat-management-system/
+├── client/                     # Frontend Web Application (React 18 + Vite)
+│   ├── public/                 # Static Assets & Emblem Graphics
+│   └── src/
+│       ├── components/         # Reusable Component Library
+│       │   ├── CitizenProfileModal.jsx
+│       │   ├── Footer.jsx
+│       │   ├── GovernmentHeader.jsx
+│       │   └── StatusTimeline.jsx
+│       ├── context/            # React State Context Providers
+│       │   ├── AuthContext.jsx
+│       │   └── SocketContext.jsx
+│       ├── pages/              # Application Views & Dashboards
+│       │   ├── AdminDashboard.jsx
+│       │   ├── CitizenDashboard.jsx
+│       │   ├── ComplaintDetails.jsx
+│       │   ├── Home.jsx
+│       │   ├── Login.jsx
+│       │   ├── NewComplaint.jsx
+│       │   ├── Register.jsx
+│       │   ├── Rewards.jsx
+│       │   ├── StaffDashboard.jsx
+│       │   └── TopPanchayats.jsx
+│       ├── services/           # Centralized Axios HTTP Client
+│       │   └── api.js
+│       ├── App.jsx             # React Router Route Definitions
+│       ├── main.jsx            # Application Root Mounting
+│       └── index.css           # Modern Glassmorphism Styling Token System
+│
+├── server/                     # Backend REST API + Socket.IO Server (Node.js)
+│   ├── config/                 # Database, Seeder & Socket Modules
+│   │   ├── db.js
+│   │   ├── seedAdmin.js
+│   │   └── socket.js
+│   ├── controllers/            # Business Logic Route Controllers
+│   │   ├── adminController.js
+│   │   ├── authController.js
+│   │   ├── complaintController.js
+│   │   ├── locationController.js
+│   │   └── rewardController.js
+│   ├── middleware/             # JWT Authentication & Authorization
+│   │   └── authMiddleware.js
+│   ├── models/                 # Mongoose Data Schemas
+│   │   ├── Complaint.js
+│   │   ├── Jurisdiction.js
+│   │   ├── Redemption.js
+│   │   ├── RewardTransaction.js
+│   │   ├── StatusHistory.js
+│   │   └── User.js
+│   ├── routes/                 # Express API Endpoint Definitions
+│   │   ├── adminRoutes.js
+│   │   ├── authRoutes.js
+│   │   ├── complaintRoutes.js
+│   │   ├── locationRoutes.js
+│   │   └── rewardRoutes.js
+│   ├── utils/                  # Cloudinary, ML & Notification Services
+│   │   ├── cloudinaryService.js
+│   │   ├── idGenerator.js
+│   │   ├── mlIntegration.js
+│   │   ├── notificationService.js
+│   │   └── shopData.js
+│   └── server.js               # Express API & Socket.IO HTTP Server Entry Point
+│
+├── .gitignore
+└── README.md
 ```
 
 ---
@@ -129,7 +197,7 @@ flowchart LR
 ## ✨ Core Features & Technical Highlights
 
 ### 1. ⚡ Global Real-Time Bidirectional WebSockets
-- **Socket.IO Engine**: Built on `http.createServer` for instant synchronization.
+- **Socket.IO Engine**: Built on `http.createServer` for instant synchronization across sessions.
 - **Isolated Channels**:
   - `citizen_{userId}`: Live status updates, comment replies, and coin balance sync.
   - `jurisdiction_{jurisdictionId}`: Instant arrival alerts for staff work queues.
@@ -204,10 +272,6 @@ flowchart LR
 - `GET /api/admin/analytics`: Get Panchayat resolution metrics.
 
 ---
-
-
-
-
 
 ## 📄 License
 
