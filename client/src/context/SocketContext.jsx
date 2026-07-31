@@ -10,8 +10,10 @@ export const SocketProvider = ({ children }) => {
   const { user, isAuthenticated, role } = useAuth();
 
   useEffect(() => {
-    // Initialize Socket.IO Client Connection to Backend
-    const socketInstance = io('http://localhost:5002', {
+    // Dynamic Socket URL Resolution for Local Development & Cloud Deployment (Render)
+    const backendUrl = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:5002' : '');
+
+    const socketInstance = io(backendUrl, {
       transports: ['websocket', 'polling'],
       reconnectionAttempts: 10,
       reconnectionDelay: 1000
