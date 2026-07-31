@@ -205,58 +205,9 @@ flowchart LR
 
 ---
 
-## 💻 Local Installation & Setup
 
-### 1. Clone Repository
-```bash
-git clone https://github.com/YOUR_USERNAME/panchayat-management-system.git
-cd panchayat-management-system
-```
 
-### 2. Configure Environment (`server/.env`)
-```env
-PORT=5002
-MONGODB_URI=mongodb+srv://user:password@cluster.mongodb.net/panchayat_db?retryWrites=true&w=majority
-JWT_SECRET=supersecret_panchayat_jwt_key_2026
-CLIENT_URL=http://localhost:5173
-NODE_ENV=development
 
-GMAIL_USER=your_email@gmail.com
-GMAIL_PASS=your_gmail_app_password
-
-ADMIN_EMAIL=admin@gramseva.in
-ADMIN_PASSWORD=AdminPass@123
-
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-```
-
-### 3. Start Backend REST API & Socket.IO Engine
-```bash
-cd server
-npm install
-npm run dev   # Runs on http://localhost:5002
-```
-
-### 4. Start Frontend Application
-```bash
-cd ../client
-npm install
-npm run dev   # Runs on http://localhost:5173
-```
-
----
-
-## 🔑 Default Credentials
-
-| Role | Username / Email | Password | Access |
-| :--- | :--- | :--- | :--- |
-| **System Admin** | `admin@gramseva.in` | `AdminPass@123` | Full System Control |
-| **Panchayat Staff** | `staff@gramseva.in` | `Password@123` | Jurisdiction Queue |
-| **Citizen Account** | `citizen@gramseva.in` | `Password@123` | Issue Filing & Rewards |
-
----
 
 ## 📄 License
 
