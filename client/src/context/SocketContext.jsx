@@ -11,7 +11,9 @@ export const SocketProvider = ({ children }) => {
 
   useEffect(() => {
     // Dynamic Socket URL Resolution for Local Development & Cloud Deployment (Render)
-    const backendUrl = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:5002' : '');
+    const backendUrl = import.meta.env.VITE_SOCKET_URL || import.meta.env.VITE_API_URL || 
+      (window.location.hostname === 'localhost' ? 'http://localhost:5002' : 
+      (window.location.hostname.includes('onrender.com') ? `https://${window.location.hostname.replace('frontend', 'backend')}` : ''));
 
     const socketInstance = io(backendUrl, {
       transports: ['websocket', 'polling'],

@@ -1,4 +1,6 @@
-const API_HOST = import.meta.env.VITE_API_URL || (window.location.hostname === 'localhost' ? 'http://localhost:5002' : '');
+const API_HOST = import.meta.env.VITE_API_URL || 
+  (window.location.hostname === 'localhost' ? 'http://localhost:5002' : 
+  (window.location.hostname.includes('onrender.com') ? `https://${window.location.hostname.replace('frontend', 'backend')}` : ''));
 const API_BASE = `${API_HOST}/api`;
 
 const getHeaders = (isFormData = false) => {
