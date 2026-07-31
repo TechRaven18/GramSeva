@@ -6,6 +6,7 @@ const RewardTransaction = require('../models/RewardTransaction');
 const { generateComplaintId } = require('../utils/idGenerator');
 const { analyzeComplaintImage } = require('../utils/mlIntegration');
 const { uploadToCloudinary } = require('../utils/cloudinaryService');
+const { getIO } = require('../config/socket');
 
 // Priority rank mapping for priority ordering
 const PRIORITY_ORDER = {
@@ -115,6 +116,16 @@ const createComplaint = async (req, res) => {
         ? `Complaint submitted. FLAGGED BY CNN: ${fraudDetails.reason || 'Flagged for staff review.'}` 
         : 'Complaint submitted by citizen and routed to jurisdiction authority.'
     });
+
+    // Real-time Socket.IO Broadcast
+    try {
+      const io = getIO();
+      io.to(`jurisdiction_${jurisdiction._id}`).emit('complaint:created', complaint);
+      io.to(`citizen_${req.user._id}`).emit('complaint:created', complaint);
+      io.to('admin_global').emit('complaint:created', complaint);
+    } catch (e) {
+      console.warn('[Socket.IO Emit Warning]:', e.message);
+    }
 
     return res.status(201).json({
       success: true,
@@ -339,6 +350,18 @@ const updateComplaintStatus = async (req, res) => {
       message: message || (status === 'COMPLETED' ? 'Work completed and verified. Complaint is officially closed.' : `Status updated to ${status} by authority.`)
     });
 
+    // Real-time Socket.IO Broadcast
+    try {
+      const io = getIO();
+      const citizenId = complaint.citizen?._id || complaint.citizen;
+      io.to(`citizen_${citizenId}`).emit('complaint:updated', complaint);
+      io.to(`jurisdiction_${complaint.jurisdictionId}`).emit('complaint:updated', complaint);
+      io.to(`complaint_${complaint._id}`).emit('complaint:updated', complaint);
+      io.to('admin_global').emit('complaint:updated', complaint);
+    } catch (e) {
+      console.warn('[Socket.IO Emit Warning]:', e.message);
+    }
+
     res.json({
       success: true,
       message: `Complaint status updated to ${status}.${rewardAwarded ? ' Citizen awarded +20 reward coins!' : ''}`,
@@ -430,6 +453,22 @@ const addComment = async (req, res) => {
     }
 
     await complaint.save();
+
+    // Real-time Socket.IO Broadcast
+    try {
+      const io = getIO();
+      const citizenId = complaint.citizen?._id || complaint.citizen;
+      io.to(`complaint_${complaint._id}`).emit('comment:added', {
+        complaintId: complaint._id,
+        comment: newComment,
+        complaint
+      });
+      io.to(`citizen_${citizenId}`).emit('complaint:updated', complaint);
+      io.to(`jurisdiction_${complaint.jurisdictionId}`).emit('complaint:updated', complaint);
+      io.to('admin_global').emit('complaint:updated', complaint);
+    } catch (e) {
+      console.warn('[Socket.IO Emit Warning]:', e.message);
+    }
 
     res.json({
       success: true,

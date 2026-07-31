@@ -121,6 +121,18 @@ const requestRedemption = async (req, res) => {
       });
     }
 
+    // Real-time Socket.IO Broadcast
+    try {
+      const { getIO } = require('../config/socket');
+      const io = getIO();
+      io.to(`citizen_${user._id}`).emit('reward:updated', {
+        rewardCoins: user.rewardCoins,
+        redemption
+      });
+    } catch (e) {
+      console.warn('[Socket.IO Emit Warning]:', e.message);
+    }
+
     res.status(201).json({
       success: true,
       message: `Successfully redeemed ${amount} coins for ₹${amount} discount at ${shopDetail.name}!`,
