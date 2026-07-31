@@ -1,0 +1,254 @@
+[
+  {
+    "district": "Darjeeling",
+    "blocks": [
+      {
+        "name": "Darjeeling Pulbazar",
+        "panchayats": [
+          { "name": "Pulbazar GP", "villages": ["Pulbazar", "Tung", "Lam Dhura", "Ging", "Soom"] },
+          { "name": "Jorebunglow Sukhia Pokhri GP", "villages": ["Jorebunglow", "Sukhia Pokhri", "Dhotre", "Lepchajagat", "Ghoom"] },
+          { "name": "Takdah GP", "villages": ["Takdah", "Tukdah", "Mahalderam", "Lopchu", "Ringtong"] },
+          { "name": "Bhutia Busty GP", "villages": ["Bhutia Busty", "Lebong", "Alubari", "Jalapahar", "Tiger Hill"] }
+        ]
+      },
+      {
+        "name": "Kurseong",
+        "panchayats": [
+          { "name": "Kurseong GP", "villages": ["Kurseong", "Mahanadi", "Gayabari", "Rohini", "Ambootia"] },
+          { "name": "Chunbhati GP", "villages": ["Chunbhati", "Balasun", "Tuckling", "Simulbari", "Pankhabari"] },
+          { "name": "Phubsering GP", "villages": ["Phubsering", "Mongpu", "Ging", "Nayabazar", "Pedong"] }
+        ]
+      },
+      {
+        "name": "Mirik",
+        "panchayats": [
+          { "name": "Mirik GP", "villages": ["Mirik", "Soureni", "Phuguri", "Singell", "Murmah"] },
+          { "name": "Gopaldhara GP", "villages": ["Gopaldhara", "Sittong", "Thurbo", "Okaity", "Mim"] }
+        ]
+      },
+      {
+        "name": "Rangli Rangliot",
+        "panchayats": [
+          { "name": "Rangli GP", "villages": ["Rangli", "Rangpo", "Rishi", "Rambi", "Pudung"] },
+          { "name": "Bijanbari GP", "villages": ["Bijanbari", "Majitar", "Mahamai", "Rongtong", "Simana"] }
+        ]
+      },
+      {
+        "name": "Darjeeling Municipality",
+        "panchayats": [
+          { "name": "Ward 1", "villages": ["Ward 1 Area A", "Ward 1 Area B"] },
+          { "name": "Ward 2", "villages": ["Ward 2 Area A", "Ward 2 Area B"] },
+          { "name": "Ward 3", "villages": ["Ward 3 Area A", "Ward 3 Area B"] },
+          { "name": "Ward 4", "villages": ["Ward 4 Area A", "Ward 4 Area B"] },
+          { "name": "Ward 5", "villages": ["Ward 5 Area A", "Ward 5 Area B"] },
+          { "name": "Ward 6", "villages": ["Ward 6 Area A", "Ward 6 Area B"] },
+          { "name": "Ward 7", "villages": ["Ward 7 Area A", "Ward 7 Area B"] },
+          { "name": "Ward 8", "villages": ["Ward 8 Area A", "Ward 8 Area B"] },
+          { "name": "Ward 9", "villages": ["Ward 9 Area A", "Ward 9 Area B"] },
+          { "name": "Ward 10", "villages": ["Ward 10 Area A", "Ward 10 Area B"] }
+        ]
+      }
+    ]
+  },
+  {
+    "district": "Kalimpong",
+    "blocks": [
+      {
+        "name": "Kalimpong I",
+        "panchayats": [
+          { "name": "Kalimpong GP", "villages": ["Kalimpong", "Durpin", "Lal Bazar", "Peshok", "Samthar"] },
+          { "name": "Lava GP", "villages": ["Lava", "Lolaygaon", "Kafer", "Rishop", "Kolbong"] },
+          { "name": "Gorubathan GP", "villages": ["Gorubathan", "Algarah", "Samthar", "Majua", "Samsing"] }
+        ]
+      },
+      {
+        "name": "Kalimpong II",
+        "panchayats": [
+          { "name": "Pedong GP", "villages": ["Pedong", "Reshi", "Algara", "Icchey", "Bhutan Border"] },
+          { "name": "Mahakalpara GP", "villages": ["Mahakalpara", "Chhota Singtam", "Sipsu", "Bong"] }
+        ]
+      }
+    ]
+  },
+  {
+    "district": "Jalpaiguri",
+    "blocks": [
+      {
+        "name": "Jalpaiguri Sadar",
+        "panchayats": [
+          { "name": "Rajganj GP", "villages": ["Rajganj Bazar", "Mogalhat", "Berubari", "Nalta", "Kohinoor"] },
+          { "name": "Belakoba GP", "villages": ["Belakoba", "Changrabandha", "Dhupguri", "Baganpara"] },
+          { "name": "Bhaktinagar GP", "villages": ["Bhaktinagar", "Bhangdabari", "Bangalbari", "Madarhat"] },
+          { "name": "Moynaguri GP", "villages": ["Moynaguri", "Kharibari", "Arabindanagar", "Masandpur"] }
+        ]
+      },
+      {
+        "name": "Maynaguri",
+        "panchayats": [
+          { "name": "Maynaguri GP", "villages": ["Maynaguri", "Odlabari", "Patlakhawa", "Rajadanga"] },
+          { "name": "Nagrakata GP", "villages": ["Nagrakata", "Matiali", "Bandapani", "Dhupjhora", "Lankamari"] },
+          { "name": "Kharibari GP", "villages": ["Kharibari", "Falakata", "Damanpur", "Apalchand"] }
+        ]
+      },
+      {
+        "name": "Dhupguri",
+        "panchayats": [
+          { "name": "Dhupguri GP", "villages": ["Dhupguri", "Bhogdaburi", "Patkata", "Madarihat"] },
+          { "name": "Totopara GP", "villages": ["Totopara", "Binnaguri", "Jateswar", "Shishubari"] }
+        ]
+      },
+      {
+        "name": "Malbazar",
+        "panchayats": [
+          { "name": "Malbazar GP", "villages": ["Malbazar", "Banarhat", "Bagrakote", "Chalsa", "Lataguri"] },
+          { "name": "Gairkata GP", "villages": ["Gairkata", "Samuktala", "Raipur", "Banarhat"] }
+        ]
+      }
+    ]
+  },
+  {
+    "district": "Alipurduar",
+    "blocks": [
+      {
+        "name": "Alipurduar I",
+        "panchayats": [
+          { "name": "Alipurduar GP", "villages": ["Alipurduar", "Kamakhyaguri", "Salkumar", "Nayarhat"] },
+          { "name": "Falakata GP", "villages": ["Falakata", "Damanpur", "Satali", "Jambari"] }
+        ]
+      },
+      {
+        "name": "Alipurduar II",
+        "panchayats": [
+          { "name": "Kalchini GP", "villages": ["Kalchini", "Hasimara", "Birpara", "Redbank"] },
+          { "name": "Kumargram GP", "villages": ["Kumargram", "Jaigaon", "Buxa", "Rajabhat khawa"] }
+        ]
+      }
+    ]
+  },
+  {
+    "district": "Cooch Behar",
+    "blocks": [
+      {
+        "name": "Cooch Behar I",
+        "panchayats": [
+          { "name": "Pundibari GP", "villages": ["Pundibari", "Baneswar", "Baxiganj", "Dewanhat", "Ghughumari"] },
+          { "name": "Sitalkuchi GP", "villages": ["Sitalkuchi", "Natabari", "Khalpara", "Gosainganj"] }
+        ]
+      },
+      {
+        "name": "Cooch Behar II",
+        "panchayats": [
+          { "name": "Mathabhanga GP", "villages": ["Mathabhanga", "Sitai", "Salkumar", "Sukdebpur", "Ghoksadanga"] },
+          { "name": "Mekhliganj GP", "villages": ["Mekhliganj", "Haldibari", "Sahebganj", "Karala"] }
+        ]
+      }
+    ]
+  },
+  {
+    "district": "Uttar Dinajpur",
+    "blocks": [
+      {
+        "name": "Raiganj",
+        "panchayats": [
+          { "name": "Raiganj GP", "villages": ["Raiganj", "Bindol", "Sona", "Hemtabad", "Karandighi"] },
+          { "name": "Banshihari GP", "villages": ["Banshihari", "Bindol", "Mrigupara", "Bagdokra"] }
+        ]
+      },
+      {
+        "name": "Islampur",
+        "panchayats": [
+          { "name": "Islampur GP", "villages": ["Islampur", "Chakulia", "Dalkhola", "Manikpur", "Karnajora"] }
+        ]
+      }
+    ]
+  },
+  {
+    "district": "Dakshin Dinajpur",
+    "blocks": [
+      {
+        "name": "Balurghat",
+        "panchayats": [
+          { "name": "Balurghat GP", "villages": ["Balurghat", "Patiram", "Banshihari", "Nishchintapur", "Tapan"] }
+        ]
+      },
+      {
+        "name": "Gangarampur",
+        "panchayats": [
+          { "name": "Gangarampur GP", "villages": ["Gangarampur", "Tapan", "Buniadpur", "Kumarganj", "Harirampur"] }
+        ]
+      }
+    ]
+  },
+  {
+    "district": "Malda",
+    "blocks": [
+      {
+        "name": "English Bazar",
+        "panchayats": [
+          { "name": "English Bazar GP", "villages": ["English Bazar", "Mothabari", "Rajapur", "Kotwali"] },
+          { "name": "Manikchak GP", "villages": ["Manikchak", "Kaliachak", "Gopalpur", "Uttar Chanchal"] }
+        ]
+      },
+      {
+        "name": "Old Malda",
+        "panchayats": [
+          { "name": "Old Malda GP", "villages": ["Old Malda", "Bamongola", "Habibpur", "Bholahat"] }
+        ]
+      }
+    ]
+  },
+  {
+    "district": "Murshidabad",
+    "blocks": [
+      {
+        "name": "Berhampore",
+        "panchayats": [
+          { "name": "Berhampore GP", "villages": ["Berhampore", "Hariharpara", "Nowda", "Domkal"] },
+          { "name": "Raninagar I GP", "villages": ["Raninagar", "Domkal", "Jalangi", "Phulia"] }
+        ]
+      },
+      {
+        "name": "Kandi",
+        "panchayats": [
+          { "name": "Kandi GP", "villages": ["Kandi", "Khargram", "Burwan", "Bharatpur"] }
+        ]
+      }
+    ]
+  },
+  {
+    "district": "Nadia",
+    "blocks": [
+      {
+        "name": "Krishnanagar I",
+        "panchayats": [
+          { "name": "Krishnanagar GP", "villages": ["Krishnanagar", "Nabadwip", "Santipur", "Hanskhali"] },
+          { "name": "Chakdaha GP", "villages": ["Chakdaha", "Ranaghat", "Hanskhali", "Haringhata"] }
+        ]
+      },
+      {
+        "name": "Nabadwip",
+        "panchayats": [
+          { "name": "Nabadwip GP", "villages": ["Nabadwip", "Krishnanagar", "Santipur", "Mayapur"] }
+        ]
+      }
+    ]
+  },
+  {
+    "district": "North 24 Parganas",
+    "blocks": [
+      {
+        "name": "Barasat I",
+        "panchayats": [
+          { "name": "Haroa GP", "villages": ["Haroa", "Minakhan", "Sandeshkhali", "Hasnabad"] },
+          { "name": "Minakhan GP", "villages": ["Minakhan", "Haroa", "Basirhat", "Taki"] }
+        ]
+      },
+      {
+        "name": "Bongaon",
+        "panchayats": [
+          { "name": "Bongaon GP", "villages": ["Bongaon", "Gaighata", "Swarupnagar", "Baduria"] }
+        ]
+      }
+    ]
+  }
+]
