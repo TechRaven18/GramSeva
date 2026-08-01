@@ -26,6 +26,185 @@
 
 ---
 
+## ❗ Problem Statement
+
+Civic grievance redressal at the grassroots level (Gram Panchayats and small Municipalities) in India remains largely **manual, opaque, and disconnected**:
+
+| # | Problem | Real-World Impact |
+| :-: | :--- | :--- |
+| 1 | **No structured reporting channel** — citizens report issues (broken roads, open manholes, damaged poles, garbage, tube-well failures) via phone calls, physical visits, or informal complaints to ward members. | Complaints get lost, mis-routed, or ignored with no paper trail. |
+| 2 | **Zero visibility into complaint status** — once filed, a citizen has no way to know if their grievance was seen, accepted, or acted upon. | Repeated follow-up visits to Panchayat offices; erosion of public trust. |
+| 3 | **No jurisdiction-based routing** — complaints aren't automatically mapped to the correct District → Block → Panchayat → Village staff responsible for resolving them. | Delays as complaints are manually forwarded between offices. |
+| 4 | **No prioritization of critical/hazardous issues** — a live wire hazard and a minor pothole are treated identically in a paper register. | Life-threatening issues (open manholes, damaged electric poles) don't get urgent attention. |
+| 5 | **No accountability or performance benchmarking** — there is no public record comparing how efficiently different Panchayats resolve civic issues. | No incentive for staff to resolve complaints faster; underperformance goes unnoticed. |
+| 6 | **No citizen incentive to engage** — reporting a problem is treated as a chore with no acknowledgment once resolved. | Low civic participation; citizens stop reporting altogether. |
+| 7 | **Evidence and follow-ups are hard to manage on paper** — photo evidence, staff clarification requests, and citizen replies have no structured, timestamped record. | Disputes over "who said what," no audit trail for grievance resolution. |
+
+In short: **local grievance redressal lacks a digital, transparent, trackable, and accountable system** — the exact gap GramSeva is built to close.
+
+---
+
+## ✅ Our Solution
+
+GramSeva addresses each of the problems above with a purpose-built feature:
+
+| Problem | GramSeva's Solution |
+| :--- | :--- |
+| No structured reporting channel | A **guided complaint form** captures District → Block → Panchayat → Village jurisdiction, exact landmark, problem category, description, and up to 3 evidence photos — creating a permanent digital record for every complaint. |
+| Zero visibility into status | **Real-time Socket.IO status tracking** pushes live updates (`PENDING → ACCEPTED → SANCTIONED → COMPLETED / NEEDS_INFO`) straight to the citizen's dashboard the moment staff acts on it. |
+| No jurisdiction-based routing | Every complaint is **auto-broadcast to the correct `jurisdiction_{id}` room**, so only the staff member responsible for that exact Panchayat/Ward sees it in their work queue. |
+| No prioritization of hazards | A **Native Priority Classifier** automatically flags high-risk categories (open manholes, damaged poles, etc.) as **Critical Safety Cases**, surfacing them at the top of the staff queue. |
+| No accountability / benchmarking | A **public Top 10 Panchayat Leaderboard** and an **Admin Analytics Console** rank every local authority by resolution rate, completed cases, and response speed — visible to citizens and administrators alike. |
+| No citizen incentive | A **Reward Coin economy** credits citizens with 20 coins per genuinely resolved complaint, redeemable in multiples of 100 for real discounts at partner ration shops, gas agencies, electricity counters, and more. |
+| No structured evidence/follow-up trail | A **conditional intercommunication system** locks citizen replies while a complaint is under active review and unlocks a threaded, timestamped comment + photo-reply flow the moment staff requests more information (`NEEDS_INFO`). |
+
+The result is a closed-loop system: **Citizen files → System routes & prioritizes → Staff resolves → Citizen is notified & rewarded → Performance is publicly benchmarked** — all in real time, with zero paperwork.
+
+---
+
+## 📸 Application Screenshots
+
+<div align="center">
+
+### 🏠 Public Portal
+
+<table>
+<tr>
+<td width="50%">
+
+**Home Page**
+<br>Citizens can report issues, view the helpdesk, or log in — all from a clean government-style landing page.
+
+<img src="screenshorts/homepage.png" alt="GramSeva Home Page" width="100%"/>
+
+</td>
+<td width="50%">
+
+**Top 10 Panchayats**
+<br>Public leaderboard ranking Panchayats by total grievances, completed complaints, and resolution rate.
+
+<img src="screenshorts/top10panchayat.png" alt="Top 10 Panchayats Leaderboard" width="100%"/>
+
+</td>
+</tr>
+</table>
+
+### 🔐 Authentication & Onboarding
+
+<table>
+<tr>
+<td width="50%">
+
+**Citizen Login**
+<br>Password or passwordless Email-OTP login for citizens.
+
+<img src="screenshorts/citizenlogin.png" alt="Citizen Login" width="100%"/>
+
+</td>
+<td width="50%">
+
+**Staff Login**
+<br>Separate secure login for Staff Members and System Admins.
+
+<img src="screenshorts/stafflogin.png" alt="Staff Login" width="100%"/>
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+**New Citizen Registration**
+<br>Full name, mandatory email User ID, and complete residential jurisdiction (District → Block → Panchayat → Village).
+
+<img src="screenshorts/newcitizenregister.png" alt="New Citizen Registration" width="100%"/>
+
+</td>
+<td width="50%">
+
+**Verify Email by OTP**
+<br>6-digit OTP dispatched to the registered email for identity verification.
+
+<img src="screenshorts/verifyemailbyotp.png" alt="Verify Email by OTP" width="100%"/>
+
+</td>
+</tr>
+</table>
+
+<img src="screenshorts/createpasswordforcitizen.png" alt="Create Password for Citizen" width="49%"/>
+
+### 🙋 Citizen Experience
+
+<table>
+<tr>
+<td width="50%">
+
+**Citizen Dashboard**
+<br>Live view of currently undergoing complaints, with a one-click "Report New Problem" action.
+
+<img src="screenshorts/citizendashboard.png" alt="Citizen Dashboard" width="100%"/>
+
+</td>
+<td width="50%">
+
+**New Complaint Form**
+<br>Jurisdiction auto-fill, problem category selection, description, and evidence photo upload (JPG/PNG/WEBP, max 3).
+
+<img src="screenshorts/newcomplain.png" alt="New Complaint Form" width="100%"/>
+
+</td>
+</tr>
+</table>
+
+**Reward & Redeem System**
+<br>Citizens track their Civic Reward Coin balance and redeem coins (in multiples of 100) at partner merchant stores.
+
+<img src="screenshorts/rewardandredeemsystem.png" alt="Reward and Redeem System" width="60%"/>
+
+### 🛡️ Staff & Admin Console
+
+<table>
+<tr>
+<td width="50%">
+
+**Admin Dashboard**
+<br>System-wide metrics: total grievances, resolution rate, active staff, and registered citizens, plus performance rankings.
+
+<img src="screenshorts/admindashboard.png" alt="Admin Dashboard" width="100%"/>
+
+</td>
+<td width="50%">
+
+**Admin Dashboard — Staff Directory**
+<br>Admins manage staff accounts, jurisdiction mapping, activation status, and password resets.
+
+<img src="screenshorts/admindashboard2.png" alt="Admin Dashboard Staff Directory" width="100%"/>
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+**Create New Staff**
+<br>Onboard new staff with jurisdiction assignment via District → Panchayat/Ward search.
+
+<img src="screenshorts/createnewstaff.png" alt="Create New Staff Account" width="100%"/>
+
+</td>
+<td width="50%">
+
+**Staff Dashboard**
+<br>Priority-sorted jurisdiction work queue highlighting Critical Safety Cases, with pending/accepted/completed counters.
+
+<img src="screenshorts/staffdashboard.png" alt="Staff Dashboard" width="100%"/>
+
+</td>
+</tr>
+</table>
+
+</div>
+
+---
+
 ## 📐 System Architecture
 
 ```mermaid
@@ -188,7 +367,25 @@ panchayat-management-system/
 │   │   └── shopData.js
 │   └── server.js               # Express API & Socket.IO HTTP Server Entry Point
 │
+├── screenshorts/                # Application Screenshot Assets (used in README)
+│   ├── homepage.png
+│   ├── top10panchayat.png
+│   ├── citizenlogin.png
+│   ├── stafflogin.png
+│   ├── newcitizenregister.png
+│   ├── verifyemailbyotp.png
+│   ├── createpasswordforcitizen.png
+│   ├── citizendashboard.png
+│   ├── newcomplain.png
+│   ├── rewardandredeemsystem.png
+│   ├── admindashboard.png
+│   ├── admindashboard2.png
+│   ├── createnewstaff.png
+│   └── staffdashboard.png
+│
 ├── .gitignore
+├── LICENSE
+├── requirement.txt
 └── README.md
 ```
 
