@@ -42,14 +42,18 @@ const sendRealEmail = async ({ to, subject, html, text }) => {
     // 1. Resend HTTP API (100% Cloud Compatible on Render - Port 443 HTTPS)
     if (process.env.RESEND_API_KEY) {
       try {
+        const apiKey = process.env.RESEND_API_KEY.trim();
+        const fromAddress = process.env.EMAIL_FROM || 'onboarding@resend.dev';
+        
+        console.log(`[RESEND ATTEMPT] Sending email to ${to} via Resend API...`);
         const res = await fetch('https://api.resend.com/emails', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${process.env.RESEND_API_KEY.trim()}`,
+            'Authorization': `Bearer ${apiKey}`,
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            from: process.env.EMAIL_FROM || 'GramSeva Portal <onboarding@resend.dev>',
+            from: fromAddress,
             to: [to],
             subject,
             html: html || `<p>${text}</p>`,
@@ -57,13 +61,13 @@ const sendRealEmail = async ({ to, subject, html, text }) => {
           })
         });
         const data = await res.json();
-        if (res.ok) {
-          console.log(`[RESEND HTTP SUCCESS] Real Email sent to ${to}. ID: ${data.id}`);
+        if (res.ok && data.id) {
+          console.log(`[RESEND SUCCESS] Real Email delivered to ${to}! MessageId: ${data.id}`);
           return { success: true, messageId: data.id };
         }
-        console.warn(`[RESEND API NOTICE: ${data.message || JSON.stringify(data)}]`);
+        console.error(`[RESEND ERROR RESP] Status ${res.status}: ${JSON.stringify(data)}`);
       } catch (resendErr) {
-        console.warn(`[RESEND API ERROR: ${resendErr.message}]`);
+        console.error(`[RESEND FETCH ERROR] ${resendErr.message}`);
       }
     }
 
