@@ -68,7 +68,6 @@ export default function AdminDashboard() {
     try {
       const res = await adminAPI.getApplications();
       const all = res.applications || [];
-      // Only keep unviewed applications in the active queue
       setApplications(all.filter(a => a.status === 'PENDING_REVIEW'));
     } catch (err) {
       console.error(err);
@@ -174,7 +173,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // Search Complaint by Complaint Number
   const handleSearchComplaint = async (e) => {
     e.preventDefault();
     if (!searchComplaintNum.trim()) return;
@@ -194,7 +192,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // Admin Status Override
   const handleAdminStatusOverride = async (e) => {
     e.preventDefault();
     if (!searchedComplaint) return;
@@ -213,10 +210,9 @@ export default function AdminDashboard() {
     }
   };
 
-  // Admin Delete Complaint
   const handleAdminDeleteComplaint = async () => {
     if (!searchedComplaint) return;
-    if (window.confirm(`⚠️ PERMANENTLY DELETE COMPLAINT?\n\nComplaint ID: ${searchedComplaint.complaintId}\nCategory: ${searchedComplaint.category}\n\nAre you sure you want to permanently delete this complaint from the database? This action cannot be undone.`)) {
+    if (window.confirm(`⚠️ PERMANENTLY DELETE COMPLAINT?\n\nComplaint ID: ${searchedComplaint.complaintId}\nCategory: ${searchedComplaint.category}\n\nAre you sure you want to permanently delete this complaint from the database?`)) {
       setActionMsg('');
       try {
         const res = await adminAPI.adminDeleteComplaint(searchedComplaint._id);
@@ -230,7 +226,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // Admin Mark Application as Viewed
   const handleMarkApplicationViewed = async (id) => {
     try {
       await adminAPI.markApplicationViewed(id);
@@ -251,58 +246,59 @@ export default function AdminDashboard() {
       s.jurisdiction?.district?.toLowerCase().includes(q);
   });
 
-  const unviewedAppsCount = applications.filter(a => a.status === 'PENDING_REVIEW').length;
+  const unviewedAppsCount = applications.length;
 
   return (
     <div className="page-wrapper">
       <div className="app-container">
         {/* Banner Header */}
         <div className="glass-card" style={{
-          marginBottom: '2rem',
+          marginBottom: '1.75rem',
           background: 'linear-gradient(135deg, #f3e8ff 0%, #ffffff 100%)',
           borderLeft: '4px solid #7c3aed',
-          border: '1px solid #d8b4fe'
+          border: '1px solid #d8b4fe',
+          padding: '1.5rem'
         }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#7c3aed', fontWeight: '800', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
-                <Shield size={18} /> System Administrator Portal
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: '#7c3aed', fontWeight: '800', fontSize: '0.85rem', marginBottom: '0.2rem' }}>
+                <Shield size={16} /> System Administrator Portal
               </div>
-              <h1 style={{ fontSize: '1.8rem', color: '#004071', fontWeight: '800' }}>
+              <h1 style={{ fontSize: 'clamp(1.3rem, 2.2vw, 1.7rem)', color: '#004071', fontWeight: '800', margin: 0 }}>
                 Panchayat Authority & System Control Panel
               </h1>
               <p style={{ color: '#475569', fontSize: '0.9rem', marginTop: '0.25rem', fontWeight: '500' }}>
-                Full authority complaint override, citizen application review, staff management, and Panchayat resolution rankings.
+                Full authority complaint override, citizen application review, staff management, and Panchayat performance rankings.
               </p>
             </div>
-            <button onClick={handleOpenModal} className="btn btn-primary">
-              <UserPlus size={18} /> Create Staff Account
+            <button onClick={handleOpenModal} className="btn btn-primary" style={{ fontSize: '0.9rem', padding: '0.65rem 1.15rem' }}>
+              <UserPlus size={16} /> Create Staff Account
             </button>
           </div>
         </div>
 
         {/* System Overview Metrics */}
-        <div className="grid-4" style={{ marginBottom: '2rem' }}>
-          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '1.25rem', borderRadius: '12px', boxShadow: '0 2px 6px rgba(0,0,0,0.04)' }}>
-            <div style={{ color: '#475569', fontSize: '0.8rem', fontWeight: '800', textTransform: 'uppercase' }}>Total Grievances</div>
-            <div style={{ fontSize: '2rem', fontWeight: '900', color: '#004071', marginTop: '0.2rem' }}>{overview.totalComplaints || 0}</div>
+        <div className="grid-4" style={{ marginBottom: '1.75rem' }}>
+          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '1.1rem 1.25rem', borderRadius: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
+            <div style={{ color: '#475569', fontSize: '0.78rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Total Grievances</div>
+            <div style={{ fontSize: '1.8rem', fontWeight: '800', color: '#004071', marginTop: '0.15rem' }}>{overview.totalComplaints || 0}</div>
           </div>
-          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '1.25rem', borderRadius: '12px', boxShadow: '0 2px 6px rgba(0,0,0,0.04)' }}>
-            <div style={{ color: '#475569', fontSize: '0.8rem', fontWeight: '800', textTransform: 'uppercase' }}>Resolution Rate</div>
-            <div style={{ fontSize: '2rem', fontWeight: '900', color: '#059669', marginTop: '0.2rem' }}>{overview.resolutionRate || 0}%</div>
+          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '1.1rem 1.25rem', borderRadius: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
+            <div style={{ color: '#475569', fontSize: '0.78rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Resolution Rate</div>
+            <div style={{ fontSize: '1.8rem', fontWeight: '800', color: '#059669', marginTop: '0.15rem' }}>{overview.resolutionRate || 0}%</div>
           </div>
-          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '1.25rem', borderRadius: '12px', boxShadow: '0 2px 6px rgba(0,0,0,0.04)' }}>
-            <div style={{ color: '#475569', fontSize: '0.8rem', fontWeight: '800', textTransform: 'uppercase' }}>Pending Citizen Apps</div>
-            <div style={{ fontSize: '2rem', fontWeight: '900', color: '#7c3aed', marginTop: '0.2rem' }}>{unviewedAppsCount}</div>
+          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '1.1rem 1.25rem', borderRadius: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
+            <div style={{ color: '#475569', fontSize: '0.78rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Pending Citizen Apps</div>
+            <div style={{ fontSize: '1.8rem', fontWeight: '800', color: '#7c3aed', marginTop: '0.15rem' }}>{unviewedAppsCount}</div>
           </div>
-          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '1.25rem', borderRadius: '12px', boxShadow: '0 2px 6px rgba(0,0,0,0.04)' }}>
-            <div style={{ color: '#475569', fontSize: '0.8rem', fontWeight: '800', textTransform: 'uppercase' }}>Active Staff</div>
-            <div style={{ fontSize: '2rem', fontWeight: '900', color: '#0284c7', marginTop: '0.2rem' }}>{overview.totalStaff || 0}</div>
+          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '1.1rem 1.25rem', borderRadius: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
+            <div style={{ color: '#475569', fontSize: '0.78rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Active Staff</div>
+            <div style={{ fontSize: '1.8rem', fontWeight: '800', color: '#0284c7', marginTop: '0.15rem' }}>{overview.totalStaff || 0}</div>
           </div>
         </div>
 
-        {/* Tab Controls (4 Main Admin Tabs) */}
-        <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+        {/* Tab Controls */}
+        <div style={{ display: 'flex', gap: '0.6rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
           <button
             onClick={() => setActiveTab('analytics')}
             className="btn btn-sm"
@@ -311,10 +307,11 @@ export default function AdminDashboard() {
               color: activeTab === 'analytics' ? '#ffffff' : '#334155',
               border: '1px solid #cbd5e1',
               fontWeight: '700',
-              padding: '0.6rem 1.25rem'
+              fontSize: '0.85rem',
+              padding: '0.55rem 1.1rem'
             }}
           >
-            <BarChart2 size={16} /> Panchayat Performance Rankings
+            <BarChart2 size={15} /> Panchayat Performance Rankings
           </button>
           <button
             onClick={() => setActiveTab('search-complaint')}
@@ -324,10 +321,11 @@ export default function AdminDashboard() {
               color: activeTab === 'search-complaint' ? '#ffffff' : '#334155',
               border: '1px solid #cbd5e1',
               fontWeight: '700',
-              padding: '0.6rem 1.25rem'
+              fontSize: '0.85rem',
+              padding: '0.55rem 1.1rem'
             }}
           >
-            <Search size={16} /> 🔍 Complaint Lookup & State Override
+            <Search size={15} /> 🔍 Complaint Lookup & State Override
           </button>
           <button
             onClick={() => setActiveTab('citizen-applications')}
@@ -337,11 +335,11 @@ export default function AdminDashboard() {
               color: activeTab === 'citizen-applications' ? '#ffffff' : '#334155',
               border: '1px solid #cbd5e1',
               fontWeight: '700',
-              padding: '0.6rem 1.25rem',
-              position: 'relative'
+              fontSize: '0.85rem',
+              padding: '0.55rem 1.1rem'
             }}
           >
-            <Mail size={16} /> 📩 Citizen Applications {unviewedAppsCount > 0 && <span style={{ background: '#ef4444', color: '#fff', borderRadius: '10px', padding: '0.1rem 0.5rem', fontSize: '0.75rem', marginLeft: '0.4rem' }}>{unviewedAppsCount} New</span>}
+            <Mail size={15} /> 📩 Citizen Applications {unviewedAppsCount > 0 && <span style={{ background: '#ef4444', color: '#fff', borderRadius: '10px', padding: '0.1rem 0.45rem', fontSize: '0.75rem', marginLeft: '0.35rem' }}>{unviewedAppsCount} New</span>}
           </button>
           <button
             onClick={() => setActiveTab('staff')}
@@ -351,208 +349,50 @@ export default function AdminDashboard() {
               color: activeTab === 'staff' ? '#ffffff' : '#334155',
               border: '1px solid #cbd5e1',
               fontWeight: '700',
-              padding: '0.6rem 1.25rem'
+              fontSize: '0.85rem',
+              padding: '0.55rem 1.1rem'
             }}
           >
-            <Users size={16} /> Staff Directory ({staffList.length})
+            <Users size={15} /> Staff Directory ({staffList.length})
           </button>
         </div>
 
-        {/* ============================
-            CREATE STAFF MODAL
-        =============================== */}
-        {showCreateModal && (
-          <div style={{
-            position: 'fixed', inset: 0, zIndex: 1000,
-            background: 'rgba(15, 23, 42, 0.85)',
-            backdropFilter: 'blur(8px)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            padding: '1rem'
-          }}>
-            <div style={{
-              width: '100%', maxWidth: '750px', maxHeight: '90vh',
-              overflowY: 'auto', background: '#ffffff',
-              borderRadius: '16px', border: '1px solid #cbd5e1',
-              boxShadow: '0 20px 25px -5px rgba(0,0,0,0.3), 0 8px 10px -6px rgba(0,0,0,0.2)',
-              position: 'relative'
-            }}>
-              <div style={{
-                background: 'linear-gradient(135deg, #004071 0%, #1e3a8a 100%)',
-                padding: '1.25rem 1.75rem',
-                borderTopLeftRadius: '15px', borderTopRightRadius: '15px',
-                display: 'flex', justifyContent: 'space-between', alignItems: 'center'
-              }}>
-                <div>
-                  <div style={{ fontSize: '0.75rem', color: '#93c5fd', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                    Authority Staff Onboarding
-                  </div>
-                  <h3 style={{ fontSize: '1.35rem', color: '#ffffff', fontWeight: '800', margin: '0.2rem 0 0 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <UserPlus color="#60a5fa" size={22} /> Create Official Staff Account
-                  </h3>
-                </div>
-                <button
-                  onClick={() => setShowCreateModal(false)}
-                  style={{
-                    background: 'rgba(255,255,255,0.15)', color: '#ffffff',
-                    border: 'none', borderRadius: '50%', width: '32px', height: '32px',
-                    fontSize: '1rem', cursor: 'pointer', fontWeight: '700',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center'
-                  }}
-                >
-                  ✕
-                </button>
-              </div>
-
-              <div style={{ padding: '1.75rem' }}>
-                {createMsg && (
-                  <div style={{
-                    marginBottom: '1.25rem', padding: '0.85rem 1.1rem',
-                    background: createMsg.startsWith('✓') ? '#ecfdf5' : '#fef2f2',
-                    border: `1px solid ${createMsg.startsWith('✓') ? '#10b981' : '#f87171'}`,
-                    color: createMsg.startsWith('✓') ? '#047857' : '#b91c1c',
-                    borderRadius: '8px', fontSize: '0.9rem', fontWeight: '600'
-                  }}>{createMsg}</div>
-                )}
-
-                <form onSubmit={handleCreateStaff}>
-                  <div style={{ marginBottom: '1.25rem' }}>
-                    <div style={{ color: '#c084fc', fontWeight: '600', fontSize: '0.85rem', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                      Staff Details
-                    </div>
-                    <div className="grid-2">
-                      <div className="form-group">
-                        <label className="form-label">Staff Full Name *</label>
-                        <input type="text" className="form-input" placeholder="e.g. Suresh Kumar Prasad" value={staffName} onChange={e => setStaffName(e.target.value)} required />
-                      </div>
-                      <div className="form-group">
-                        <label className="form-label">Email Address (Mandatory User ID) *</label>
-                        <input type="email" className="form-input" placeholder="staff@gramseva.in" value={staffEmail} onChange={e => setStaffEmail(e.target.value)} required />
-                      </div>
-                    </div>
-                    <div className="grid-2">
-                      <div className="form-group">
-                        <label className="form-label">Mobile Phone Number</label>
-                        <input type="tel" className="form-input" placeholder="e.g. 9876543210" value={staffMobile} onChange={e => setStaffMobile(e.target.value)} />
-                      </div>
-                      <div className="form-group">
-                        <label className="form-label">Initial Password *</label>
-                        <input type="text" className="form-input" value={staffPassword} onChange={e => setStaffPassword(e.target.value)} required />
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style={{ marginBottom: '1.5rem' }}>
-                    <div style={{ color: '#c084fc', fontWeight: '600', fontSize: '0.85rem', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <MapPin size={14} /> Assign Jurisdiction Area *
-                    </div>
-
-                    {loadingJur ? (
-                      <div style={{ padding: '1.5rem', textAlign: 'center', color: '#64748b' }}>
-                        Loading jurisdictions...
-                      </div>
-                    ) : (
-                      <div style={{ background: '#f8fafc', borderRadius: '10px', border: '1px solid #cbd5e1', padding: '1rem' }}>
-                        <div className="form-group">
-                          <label className="form-label" style={{ fontSize: '0.8rem' }}>Step 1 — Select District</label>
-                          <select className="form-select" value={filterDistrict} onChange={e => {
-                            setFilterDistrict(e.target.value);
-                            setFilterBlock('');
-                            setSelectedJurisdictionId('');
-                          }}>
-                            <option value="">-- All Districts ({uniqueDistricts.length}) --</option>
-                            {uniqueDistricts.map(d => (
-                              <option key={d} value={d}>{d}</option>
-                            ))}
-                          </select>
-                        </div>
-
-                        {filterDistrict && (
-                          <div className="form-group">
-                            <label className="form-label" style={{ fontSize: '0.8rem' }}>Step 2 — Select Block</label>
-                            <select className="form-select" value={filterBlock} onChange={e => {
-                              setFilterBlock(e.target.value);
-                              setSelectedJurisdictionId('');
-                            }}>
-                              <option value="">-- All Blocks in {filterDistrict} --</option>
-                              {uniqueBlocks.map(b => (
-                                <option key={b} value={b}>{b}</option>
-                              ))}
-                            </select>
-                          </div>
-                        )}
-
-                        <div style={{ maxHeight: '200px', overflowY: 'auto', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff' }}>
-                          {filteredJurisdictions.map(j => (
-                            <div
-                              key={j._id}
-                              onClick={() => setSelectedJurisdictionId(j._id)}
-                              style={{
-                                padding: '0.75rem 1rem',
-                                cursor: 'pointer',
-                                borderBottom: '1px solid #e2e8f0',
-                                background: selectedJurisdictionId === j._id ? '#e0f2fe' : 'transparent',
-                                borderLeft: selectedJurisdictionId === j._id ? '4px solid #004071' : '4px solid transparent'
-                              }}
-                            >
-                              <div style={{ fontWeight: '700', color: '#0f172a' }}>{j.panchayat}</div>
-                              <div style={{ fontSize: '0.78rem', color: '#64748b' }}>📍 {j.block} · {j.district}</div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  <div style={{ display: 'flex', gap: '0.75rem' }}>
-                    <button type="submit" className="btn btn-primary" disabled={!selectedJurisdictionId}>
-                      <UserPlus size={16} /> Create Staff Account
-                    </button>
-                    <button type="button" onClick={() => setShowCreateModal(false)} className="btn btn-secondary">
-                      Cancel
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Tab 1: Analytics */}
         {activeTab === 'analytics' && (
-          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '1.5rem', borderRadius: '12px' }}>
-            <h3 style={{ fontSize: '1.25rem', color: '#004071', marginBottom: '1rem', fontWeight: '800' }}>
+          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '1.25rem 1.5rem', borderRadius: '10px' }}>
+            <h3 style={{ fontSize: '1.15rem', color: '#004071', marginBottom: '0.85rem', fontWeight: '800' }}>
               Panchayat & Local Authority Performance Rankings
             </h3>
             <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
                 <thead>
                   <tr style={{ background: '#f8fafc', borderBottom: '2px solid #cbd5e1', textAlign: 'left' }}>
-                    <th style={{ padding: '0.75rem', color: '#004071', fontWeight: '800' }}>Rank</th>
-                    <th style={{ padding: '0.75rem', color: '#004071', fontWeight: '800' }}>Authority / Panchayat</th>
-                    <th style={{ padding: '0.75rem', color: '#004071', fontWeight: '800' }}>Type</th>
-                    <th style={{ padding: '0.75rem', color: '#004071', fontWeight: '800', textAlign: 'center' }}>Staff</th>
-                    <th style={{ padding: '0.75rem', color: '#004071', fontWeight: '800', textAlign: 'center' }}>Total</th>
-                    <th style={{ padding: '0.75rem', color: '#004071', fontWeight: '800', textAlign: 'center' }}>Pending</th>
-                    <th style={{ padding: '0.75rem', color: '#004071', fontWeight: '800', textAlign: 'center' }}>Completed</th>
-                    <th style={{ padding: '0.75rem', color: '#004071', fontWeight: '800', textAlign: 'right' }}>Completion Rate</th>
+                    <th style={{ padding: '0.65rem 0.75rem', color: '#004071', fontWeight: '800' }}>Rank</th>
+                    <th style={{ padding: '0.65rem 0.75rem', color: '#004071', fontWeight: '800' }}>Authority / Panchayat</th>
+                    <th style={{ padding: '0.65rem 0.75rem', color: '#004071', fontWeight: '800' }}>Type</th>
+                    <th style={{ padding: '0.65rem 0.75rem', color: '#004071', fontWeight: '800', textAlign: 'center' }}>Staff</th>
+                    <th style={{ padding: '0.65rem 0.75rem', color: '#004071', fontWeight: '800', textAlign: 'center' }}>Total</th>
+                    <th style={{ padding: '0.65rem 0.75rem', color: '#004071', fontWeight: '800', textAlign: 'center' }}>Pending</th>
+                    <th style={{ padding: '0.65rem 0.75rem', color: '#004071', fontWeight: '800', textAlign: 'center' }}>Completed</th>
+                    <th style={{ padding: '0.65rem 0.75rem', color: '#004071', fontWeight: '800', textAlign: 'right' }}>Completion Rate</th>
                   </tr>
                 </thead>
                 <tbody>
                   {jurisdictions.map((j, idx) => (
                     <tr key={j._id} style={{ borderBottom: '1px solid #e2e8f0', background: idx % 2 === 0 ? '#f8fafc' : '#ffffff' }}>
-                      <td style={{ padding: '0.75rem', fontWeight: '800', color: '#004071' }}>#{idx + 1}</td>
-                      <td style={{ padding: '0.75rem', fontWeight: '700', color: '#0f172a' }}>
+                      <td style={{ padding: '0.65rem 0.75rem', fontWeight: '800', color: '#004071' }}>#{idx + 1}</td>
+                      <td style={{ padding: '0.65rem 0.75rem', fontWeight: '700', color: '#0f172a' }}>
                         {j.panchayat}
-                        <div style={{ fontSize: '0.78rem', color: '#64748b' }}>{j.block}, {j.district}</div>
+                        <div style={{ fontSize: '0.78rem', color: '#64748b', fontWeight: '500' }}>{j.block}, {j.district}</div>
                       </td>
-                      <td style={{ padding: '0.75rem' }}>
-                        <span style={{ background: '#e0f2fe', color: '#0369a1', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: '700' }}>{j.type}</span>
+                      <td style={{ padding: '0.65rem 0.75rem' }}>
+                        <span style={{ background: '#e0f2fe', color: '#0369a1', padding: '0.15rem 0.45rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: '700' }}>{j.type}</span>
                       </td>
-                      <td style={{ padding: '0.75rem', textAlign: 'center', fontWeight: '700' }}>{j.staffCount}</td>
-                      <td style={{ padding: '0.75rem', textAlign: 'center', fontWeight: '700' }}>{j.metrics.total}</td>
-                      <td style={{ padding: '0.75rem', textAlign: 'center', fontWeight: '700', color: '#b45309' }}>{j.metrics.pending}</td>
-                      <td style={{ padding: '0.75rem', textAlign: 'center', fontWeight: '800', color: '#059669', fontSize: '1rem' }}>{j.metrics.completed}</td>
-                      <td style={{ padding: '0.75rem', textAlign: 'right', fontWeight: '800', color: '#0284c7' }}>{j.metrics.completionRate}%</td>
+                      <td style={{ padding: '0.65rem 0.75rem', textAlign: 'center', fontWeight: '700' }}>{j.staffCount}</td>
+                      <td style={{ padding: '0.65rem 0.75rem', textAlign: 'center', fontWeight: '700' }}>{j.metrics.total}</td>
+                      <td style={{ padding: '0.65rem 0.75rem', textAlign: 'center', fontWeight: '700', color: '#b45309' }}>{j.metrics.pending}</td>
+                      <td style={{ padding: '0.65rem 0.75rem', textAlign: 'center', fontWeight: '800', color: '#059669', fontSize: '0.95rem' }}>{j.metrics.completed}</td>
+                      <td style={{ padding: '0.65rem 0.75rem', textAlign: 'right', fontWeight: '800', color: '#0284c7' }}>{j.metrics.completionRate}%</td>
                     </tr>
                   ))}
                 </tbody>
@@ -561,48 +401,45 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* ==========================================
-            TAB 2: COMPLAINT LOOKUP & AUTHORITY OVERRIDE
-        =========================================== */}
+        {/* Tab 2: Complaint Lookup & Authority Override */}
         {activeTab === 'search-complaint' && (
-          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '1.5rem', borderRadius: '12px' }}>
-            <div style={{ marginBottom: '1.5rem' }}>
-              <h3 style={{ fontSize: '1.25rem', color: '#004071', fontWeight: '800', margin: '0 0 0.25rem 0' }}>
+          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '1.25rem 1.5rem', borderRadius: '10px' }}>
+            <div style={{ marginBottom: '1.25rem' }}>
+              <h3 style={{ fontSize: '1.15rem', color: '#004071', fontWeight: '800', margin: '0 0 0.2rem 0' }}>
                 🔍 Admin Complaint Lookup & Full State Override
               </h3>
-              <p style={{ color: '#475569', fontSize: '0.875rem' }}>
+              <p style={{ color: '#475569', fontSize: '0.875rem', margin: 0 }}>
                 Enter any Complaint Number (e.g. <code>CMP-2026-0802-9A4B</code>) to view full details, change status to any state (e.g. convert <b>REJECTED</b> back to <b>PENDING</b>), or delete permanently.
               </p>
             </div>
 
-            {/* Search Input Form */}
-            <form onSubmit={handleSearchComplaint} style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.5rem', maxWidth: '650px' }}>
+            <form onSubmit={handleSearchComplaint} style={{ display: 'flex', gap: '0.6rem', marginBottom: '1.25rem', maxWidth: '600px' }}>
               <div style={{ position: 'relative', flex: 1 }}>
-                <Search size={18} style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
+                <Search size={16} style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
                 <input
                   type="text"
                   className="form-input"
-                  style={{ paddingLeft: '2.5rem', background: '#f8fafc', border: '1px solid #cbd5e1', fontWeight: '700' }}
+                  style={{ paddingLeft: '2.5rem', background: '#f8fafc', border: '1px solid #cbd5e1', fontWeight: '700', fontSize: '0.9rem' }}
                   placeholder="Enter Complaint Number (e.g. CMP-2026-...)"
                   value={searchComplaintNum}
                   onChange={e => setSearchComplaintNum(e.target.value)}
                   required
                 />
               </div>
-              <button type="submit" className="btn btn-primary" disabled={searchLoading}>
+              <button type="submit" className="btn btn-primary" style={{ fontSize: '0.875rem' }} disabled={searchLoading}>
                 {searchLoading ? 'Searching...' : 'Lookup Complaint'}
               </button>
             </form>
 
             {searchError && (
-              <div style={{ padding: '1rem', background: '#fef2f2', border: '1px solid #f87171', color: '#b91c1c', borderRadius: '8px', marginBottom: '1.5rem', fontWeight: '600' }}>
+              <div style={{ padding: '0.85rem 1rem', background: '#fef2f2', border: '1px solid #f87171', color: '#b91c1c', borderRadius: '8px', marginBottom: '1.25rem', fontWeight: '600', fontSize: '0.875rem' }}>
                 ❌ {searchError}
               </div>
             )}
 
             {actionMsg && (
               <div style={{
-                padding: '1rem', marginBottom: '1.5rem', borderRadius: '8px', fontWeight: '700',
+                padding: '0.85rem 1rem', marginBottom: '1.25rem', borderRadius: '8px', fontWeight: '700', fontSize: '0.875rem',
                 background: actionMsg.startsWith('✓') ? '#ecfdf5' : '#fef2f2',
                 border: `1px solid ${actionMsg.startsWith('✓') ? '#10b981' : '#f87171'}`,
                 color: actionMsg.startsWith('✓') ? '#047857' : '#b91c1c'
@@ -611,13 +448,12 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {/* Searched Complaint Display Card */}
             {searchedComplaint && (
-              <div style={{ background: '#f8fafc', border: '2px solid #004071', borderRadius: '12px', padding: '1.5rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', marginBottom: '1rem' }}>
+              <div style={{ background: '#f8fafc', border: '2px solid #004071', borderRadius: '10px', padding: '1.25rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem', marginBottom: '0.85rem' }}>
                   <div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.4rem' }}>
-                      <span style={{ fontFamily: 'monospace', fontWeight: '800', color: '#004071', fontSize: '1.1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.35rem' }}>
+                      <span style={{ fontFamily: 'monospace', fontWeight: '800', color: '#004071', fontSize: '1rem' }}>
                         {searchedComplaint.complaintId}
                       </span>
                       <span className={`badge status-${searchedComplaint.status.toLowerCase()}`}>
@@ -627,7 +463,7 @@ export default function AdminDashboard() {
                         Urgency: {searchedComplaint.priority}
                       </span>
                     </div>
-                    <h2 style={{ fontSize: '1.3rem', color: '#0f172a', fontWeight: '800', margin: '0.2rem 0' }}>
+                    <h2 style={{ fontSize: '1.15rem', color: '#0f172a', fontWeight: '800', margin: '0.15rem 0' }}>
                       {searchedComplaint.category}
                     </h2>
                     <div style={{ fontSize: '0.85rem', color: '#475569' }}>
@@ -635,26 +471,25 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
-                  <button onClick={handleAdminDeleteComplaint} className="btn btn-sm" style={{ background: '#dc2626', color: '#ffffff', border: 'none', fontWeight: '800' }}>
-                    <Trash2 size={16} /> Delete Complaint Permanently
+                  <button onClick={handleAdminDeleteComplaint} className="btn btn-sm" style={{ background: '#dc2626', color: '#ffffff', border: 'none', fontWeight: '800', fontSize: '0.825rem' }}>
+                    <Trash2 size={15} /> Delete Complaint Permanently
                   </button>
                 </div>
 
-                <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem' }}>
-                  <div style={{ fontSize: '0.8rem', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', marginBottom: '0.3rem' }}>Description</div>
-                  <p style={{ margin: 0, color: '#1e293b', fontSize: '0.95rem' }}>{searchedComplaint.description}</p>
+                <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.85rem 1rem', borderRadius: '8px', marginBottom: '1.25rem' }}>
+                  <div style={{ fontSize: '0.78rem', fontWeight: '800', color: '#64748b', textTransform: 'uppercase', marginBottom: '0.2rem' }}>Description</div>
+                  <p style={{ margin: 0, color: '#1e293b', fontSize: '0.9rem', lineHeight: '1.5' }}>{searchedComplaint.description}</p>
                 </div>
 
-                {/* Authority State Override Controls */}
-                <div style={{ background: '#ffffff', border: '1px solid #7c3aed', padding: '1.25rem', borderRadius: '10px' }}>
-                  <h4 style={{ fontSize: '1.05rem', color: '#7c3aed', fontWeight: '800', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <Edit3 size={18} /> Admin State Override Controls
+                <div style={{ background: '#ffffff', border: '1px solid #7c3aed', padding: '1.1rem 1.25rem', borderRadius: '8px' }}>
+                  <h4 style={{ fontSize: '1rem', color: '#7c3aed', fontWeight: '800', marginBottom: '0.65rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                    <Edit3 size={16} /> Admin State Override Controls
                   </h4>
-                  <form onSubmit={handleAdminStatusOverride} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <form onSubmit={handleAdminStatusOverride} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                     <div className="grid-2">
                       <div className="form-group" style={{ margin: 0 }}>
-                        <label className="form-label">Select New Target Status *</label>
-                        <select className="form-select" value={overrideStatus} onChange={e => setOverrideStatus(e.target.value)}>
+                        <label className="form-label" style={{ fontSize: '0.825rem' }}>Select New Target Status *</label>
+                        <select className="form-select" style={{ fontSize: '0.875rem', padding: '0.55rem 0.75rem' }} value={overrideStatus} onChange={e => setOverrideStatus(e.target.value)}>
                           <option value="PENDING">PENDING (Revert from REJECTED / Under Inspection)</option>
                           <option value="ACCEPTED">ACCEPTED (Work Approved)</option>
                           <option value="NEEDS_INFO">NEEDS_INFO (Request Info from Citizen)</option>
@@ -664,12 +499,12 @@ export default function AdminDashboard() {
                         </select>
                       </div>
                       <div className="form-group" style={{ margin: 0 }}>
-                        <label className="form-label">Override Reason / Note (Optional)</label>
-                        <input type="text" className="form-input" placeholder="e.g. Reverted from Rejected after Admin review..." value={overrideNote} onChange={e => setOverrideNote(e.target.value)} />
+                        <label className="form-label" style={{ fontSize: '0.825rem' }}>Override Reason / Note (Optional)</label>
+                        <input type="text" className="form-input" style={{ fontSize: '0.875rem', padding: '0.55rem 0.75rem' }} placeholder="e.g. Reverted from Rejected after Admin review..." value={overrideNote} onChange={e => setOverrideNote(e.target.value)} />
                       </div>
                     </div>
                     <div>
-                      <button type="submit" className="btn btn-primary" style={{ background: '#7c3aed', border: 'none' }}>
+                      <button type="submit" className="btn btn-primary" style={{ background: '#7c3aed', border: 'none', fontSize: '0.875rem' }}>
                         Apply Status Override Now
                       </button>
                     </div>
@@ -680,83 +515,73 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* ==========================================
-            TAB 3: CITIZEN DIRECT APPLICATIONS
-        =========================================== */}
+        {/* Tab 3: Citizen Direct Applications */}
         {activeTab === 'citizen-applications' && (
-          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '1.5rem', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem' }}>
+          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '1.25rem 1.5rem', borderRadius: '10px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.1rem' }}>
               <div>
-                <h3 style={{ fontSize: '1.25rem', color: '#004071', fontWeight: '800', margin: 0 }}>
-                  📩 Citizen Direct Applications to Admin ({applications.length} Total)
+                <h3 style={{ fontSize: '1.15rem', color: '#004071', fontWeight: '800', margin: 0 }}>
+                  📩 Citizen Direct Applications to Admin ({applications.length} Pending)
                 </h3>
-                <p style={{ color: '#475569', fontSize: '0.85rem', margin: '0.2rem 0 0 0' }}>
+                <p style={{ color: '#475569', fontSize: '0.85rem', margin: '0.15rem 0 0 0' }}>
                   Direct text applications submitted by citizens for specific issues. Mark as viewed to remove from active unread list.
                 </p>
               </div>
             </div>
 
             {loadingApps ? (
-              <div style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>
+              <div style={{ padding: '2.5rem', textAlign: 'center', color: '#64748b' }}>
                 Loading applications...
               </div>
             ) : applications.length === 0 ? (
-              <div style={{ padding: '3rem', textAlign: 'center', color: '#64748b', background: '#f8fafc', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
-                No citizen direct applications found.
+              <div style={{ padding: '2.5rem', textAlign: 'center', color: '#64748b', background: '#f8fafc', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '0.875rem' }}>
+                No unread citizen direct applications found.
               </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
                 {applications.map((app) => (
                   <div key={app._id} style={{
-                    padding: '1.25rem',
-                    background: app.status === 'PENDING_REVIEW' ? '#fefce8' : '#f8fafc',
-                    border: `1px solid ${app.status === 'PENDING_REVIEW' ? '#fde047' : '#cbd5e1'}`,
-                    borderLeft: `5px solid ${app.status === 'PENDING_REVIEW' ? '#eab308' : '#059669'}`,
-                    borderRadius: '10px',
+                    padding: '1.1rem 1.25rem',
+                    background: '#fefce8',
+                    border: '1px solid #fde047',
+                    borderLeft: '5px solid #eab308',
+                    borderRadius: '8px',
                     display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem'
                   }}>
-                    <div style={{ flex: 1, minWidth: '280px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.4rem' }}>
-                        <span style={{ fontFamily: 'monospace', fontWeight: '800', color: '#004071', fontSize: '0.9rem' }}>
+                    <div style={{ flex: 1, minWidth: '260px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.3rem' }}>
+                        <span style={{ fontFamily: 'monospace', fontWeight: '800', color: '#004071', fontSize: '0.875rem' }}>
                           Application #{app.applicationId}
                         </span>
                         <span style={{
-                          fontSize: '0.75rem', fontWeight: '800', padding: '0.2rem 0.6rem', borderRadius: '12px',
-                          background: app.status === 'PENDING_REVIEW' ? '#fef3c7' : '#dcfce7',
-                          color: app.status === 'PENDING_REVIEW' ? '#b45309' : '#15803d'
+                          fontSize: '0.75rem', fontWeight: '800', padding: '0.15rem 0.5rem', borderRadius: '10px',
+                          background: '#fef3c7', color: '#b45309'
                         }}>
-                          {app.status === 'PENDING_REVIEW' ? '🟡 PENDING REVIEW' : '🟢 VIEWED BY ADMIN'}
+                          🟡 PENDING REVIEW
                         </span>
                       </div>
 
-                      <div style={{ fontSize: '0.95rem', fontWeight: '700', color: '#0f172a', marginBottom: '0.25rem' }}>
+                      <div style={{ fontSize: '0.9rem', fontWeight: '700', color: '#0f172a', marginBottom: '0.2rem' }}>
                         Regarding Complaint Number: <span style={{ color: '#7c3aed', fontFamily: 'monospace' }}>{app.complaintNumber}</span>
                       </div>
 
-                      <p style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.85rem', borderRadius: '8px', color: '#1e293b', fontSize: '0.925rem', margin: '0.5rem 0' }}>
+                      <p style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '0.75rem', borderRadius: '6px', color: '#1e293b', fontSize: '0.9rem', margin: '0.4rem 0', lineHeight: '1.5' }}>
                         "{app.issue}"
                       </p>
 
-                      <div style={{ fontSize: '0.8rem', color: '#64748b' }}>
+                      <div style={{ fontSize: '0.78rem', color: '#64748b' }}>
                         👤 Submitted by <b>{app.citizenName}</b> ({app.citizenEmail}) · {new Date(app.createdAt).toLocaleString()}
-                        {app.viewedAt && ` · Viewed at ${new Date(app.viewedAt).toLocaleString()}`}
                       </div>
                     </div>
 
                     <div>
-                      {app.status === 'PENDING_REVIEW' ? (
-                        <button
-                          onClick={() => handleMarkApplicationViewed(app._id)}
-                          className="btn btn-sm"
-                          style={{ background: '#059669', color: '#ffffff', border: 'none', fontWeight: '800', padding: '0.5rem 1rem' }}
-                        >
-                          <Eye size={16} /> Mark as Viewed
-                        </button>
-                      ) : (
-                        <span style={{ fontSize: '0.8rem', color: '#059669', fontWeight: '700', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                          <CheckCircle2 size={16} /> Marked as Viewed
-                        </span>
-                      )}
+                      <button
+                        onClick={() => handleMarkApplicationViewed(app._id)}
+                        className="btn btn-sm"
+                        style={{ background: '#059669', color: '#ffffff', border: 'none', fontWeight: '800', fontSize: '0.825rem', padding: '0.45rem 0.85rem' }}
+                      >
+                        <Eye size={15} /> Mark as Viewed
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -767,47 +592,47 @@ export default function AdminDashboard() {
 
         {/* Tab 4: Staff Directory */}
         {activeTab === 'staff' && (
-          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '1.5rem', borderRadius: '12px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.25rem' }}>
-              <h3 style={{ fontSize: '1.25rem', color: '#004071', fontWeight: '800', margin: 0 }}>
+          <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '1.25rem 1.5rem', borderRadius: '10px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.1rem' }}>
+              <h3 style={{ fontSize: '1.15rem', color: '#004071', fontWeight: '800', margin: 0 }}>
                 Staff Directory ({filteredStaffList.length} Accounts)
               </h3>
             </div>
 
-            <div style={{ marginBottom: '1.25rem', position: 'relative' }}>
-              <Search size={18} style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
+            <div style={{ marginBottom: '1.1rem', position: 'relative' }}>
+              <Search size={16} style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
               <input
                 type="text"
                 className="form-input"
-                style={{ paddingLeft: '2.5rem', background: '#f8fafc', border: '1px solid #cbd5e1', fontWeight: '600' }}
+                style={{ paddingLeft: '2.5rem', background: '#f8fafc', border: '1px solid #cbd5e1', fontWeight: '600', fontSize: '0.875rem' }}
                 placeholder="🔍 Search staff by Name, Email, Panchayat..."
                 value={staffSearchQuery}
                 onChange={e => setStaffSearchQuery(e.target.value)}
               />
             </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
               {filteredStaffList.map((s) => (
-                <div key={s._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.25rem', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '10px', flexWrap: 'wrap', gap: '1rem' }}>
+                <div key={s._id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem 1.1rem', background: '#f8fafc', border: '1px solid #cbd5e1', borderRadius: '8px', flexWrap: 'wrap', gap: '0.85rem' }}>
                   <div>
-                    <div style={{ fontWeight: '800', color: '#0f172a', fontSize: '1.1rem', marginBottom: '0.2rem' }}>
-                      {s.name} {s.mobile && <span style={{ color: '#475569', fontWeight: '600', fontSize: '0.9rem' }}>({s.mobile})</span>}
+                    <div style={{ fontWeight: '800', color: '#0f172a', fontSize: '1rem', marginBottom: '0.15rem' }}>
+                      {s.name} {s.mobile && <span style={{ color: '#475569', fontWeight: '600', fontSize: '0.85rem' }}>({s.mobile})</span>}
                     </div>
-                    <div style={{ fontSize: '0.875rem', color: '#334155', fontWeight: '600' }}>
+                    <div style={{ fontSize: '0.85rem', color: '#334155', fontWeight: '600' }}>
                       📍 Jurisdiction: <b style={{ color: '#004071' }}>{s.jurisdiction?.panchayat || 'Unassigned'}</b> ({s.jurisdiction?.block}, {s.jurisdiction?.district})
                     </div>
-                    <div style={{ fontSize: '0.8rem', color: '#64748b' }}>User ID: {s.email}</div>
+                    <div style={{ fontSize: '0.78rem', color: '#64748b' }}>User ID: {s.email}</div>
                   </div>
 
-                  <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                    <button onClick={() => handleToggleStaff(s._id)} className="btn btn-sm" style={{ background: s.isActive ? '#10b981' : '#94a3b8', color: '#fff', border: 'none', fontWeight: '700' }}>
+                  <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+                    <button onClick={() => handleToggleStaff(s._id)} className="btn btn-sm" style={{ background: s.isActive ? '#10b981' : '#94a3b8', color: '#fff', border: 'none', fontWeight: '700', fontSize: '0.8rem' }}>
                       {s.isActive ? 'ACTIVE' : 'DEACTIVATED'}
                     </button>
-                    <button onClick={() => handleResetPassword(s._id, s.name)} className="btn btn-sm" style={{ background: '#004071', color: '#fff', border: 'none', fontWeight: '700' }}>
-                      <Lock size={14} /> Reset Pass
+                    <button onClick={() => handleResetPassword(s._id, s.name)} className="btn btn-sm" style={{ background: '#004071', color: '#fff', border: 'none', fontWeight: '700', fontSize: '0.8rem' }}>
+                      <Lock size={13} /> Reset Pass
                     </button>
-                    <button onClick={() => handleDeleteStaff(s._id, s.name, s.email)} className="btn btn-sm" style={{ background: '#dc2626', color: '#fff', border: 'none', fontWeight: '700' }}>
-                      <Trash2 size={14} /> Delete
+                    <button onClick={() => handleDeleteStaff(s._id, s.name, s.email)} className="btn btn-sm" style={{ background: '#dc2626', color: '#fff', border: 'none', fontWeight: '700', fontSize: '0.8rem' }}>
+                      <Trash2 size={13} /> Delete
                     </button>
                   </div>
                 </div>
