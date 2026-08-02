@@ -201,6 +201,18 @@ export const complaintAPI = {
       body: formData
     });
     return handleResponse(res);
+  },
+  createDirectApplication: async (data) => {
+    const res = await fetch(`${API_BASE}/complaints/direct-application`, {
+      method: 'POST',
+      headers: getHeaders(),
+      body: JSON.stringify(data)
+    });
+    return handleResponse(res);
+  },
+  getMyDirectApplications: async () => {
+    const res = await fetch(`${API_BASE}/complaints/my-direct-applications`, { headers: getHeaders() });
+    return handleResponse(res);
   }
 };
 
@@ -269,5 +281,36 @@ export const adminAPI = {
   getAnalytics: async () => {
     const res = await fetch(`${API_BASE}/admin/analytics`, { headers: getHeaders() });
     return handleResponse(res);
+  },
+  searchComplaintByNumber: async (complaintNumber) => {
+    const res = await fetch(`${API_BASE}/admin/complaint-lookup/${encodeURIComponent(complaintNumber)}`, { headers: getHeaders() });
+    return handleResponse(res);
+  },
+  adminUpdateComplaintStatus: async (id, data) => {
+    const res = await fetch(`${API_BASE}/admin/complaint/${id}/status-override`, {
+      method: 'PUT',
+      headers: getHeaders(),
+      body: JSON.stringify(data)
+    });
+    return handleResponse(res);
+  },
+  adminDeleteComplaint: async (id) => {
+    const res = await fetch(`${API_BASE}/admin/complaint/${id}`, {
+      method: 'DELETE',
+      headers: getHeaders()
+    });
+    return handleResponse(res);
+  },
+  getApplications: async () => {
+    const res = await fetch(`${API_BASE}/admin/applications`, { headers: getHeaders() });
+    return handleResponse(res);
+  },
+  markApplicationViewed: async (id) => {
+    const res = await fetch(`${API_BASE}/admin/applications/${id}/view`, {
+      method: 'PUT',
+      headers: getHeaders()
+    });
+    return handleResponse(res);
   }
 };
+

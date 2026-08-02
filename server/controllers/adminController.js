@@ -1,6 +1,8 @@
 const User = require('../models/User');
 const Jurisdiction = require('../models/Jurisdiction');
 const Complaint = require('../models/Complaint');
+const StatusHistory = require('../models/StatusHistory');
+const CitizenApplication = require('../models/CitizenApplication');
 const bcrypt = require('bcryptjs');
 
 // @desc    Create new Staff account assigned to a jurisdiction
@@ -174,7 +176,6 @@ const getPanchayatAnalytics = async (req, res) => {
       };
     }));
 
-    // Sort panchayats strictly by total completed complaints descending
     analytics.sort((a, b) => {
       if (b.metrics.completed !== a.metrics.completed) {
         return b.metrics.completed - a.metrics.completed;
@@ -182,7 +183,6 @@ const getPanchayatAnalytics = async (req, res) => {
       return b.metrics.total - a.metrics.total;
     });
 
-    // Calculate system overview counts
     const totalComplaints = await Complaint.countDocuments({});
     const totalCitizens = await User.countDocuments({ role: 'CITIZEN' });
     const totalStaff = await User.countDocuments({ role: 'STAFF' });
@@ -224,11 +224,202 @@ const deleteStaff = async (req, res) => {
   }
 };
 
+// ==========================================
+// NEW ADMIN AUTHORITY FEATURES
+// ==========================================
+
+// @desc    Search complaint by Complaint Number (Admin authority lookup)
+// @route   GET /api/admin/complaint-lookup/:complaintNumber
+const searchComplaintByNumber = async (req, res) => {
+  try {
+    const { complaintNumber } = req.params;
+    if (!complaintNumber) {
+      return res.status(400).json({ success: false, message: 'Please provide a valid Complaint Number.' });
+    }
+
+    const cleanId = complaintNumber.trim();
+    const complaint = await Complaint.findOne({
+      $or: [
+        { complaintId: cleanId },
+        { complaintId: { $regex: cleanId, $options: 'i' } }
+      ]
+    })
+      .populate('citizen', 'name email mobile address')
+      .populate('jurisdictionId', 'district block panchayat type')
+      .populate('assignedStaff', 'name email mobile');
+
+    if (!complaint) {
+      return res.status(404).json({
+        success: false,
+        message: `No complaint found matching Complaint Number "${cleanId}".`
+      });
+    }
+
+    const history = await StatusHistory.find({ complaint: complaint._id }).sort({ timestamp: 1 });
+
+    res.json({
+      success: true,
+      complaint,
+      history
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Admin Status Override (Allows changing REJECTED -> PENDING, etc.)
+// @route   PUT /api/admin/complaint/:id/status-override
+const adminUpdateComplaintStatus = async (req, res) => {
+  try {
+    const { status, message } = req.body;
+    const complaint = await Complaint.findById(req.params.id);
+
+    if (!complaint) {
+      return res.status(404).json({ success: false, message: 'Complaint not found.' });
+    }
+
+    const validStatuses = ['PENDING', 'ACCEPTED', 'NEEDS_INFO', 'SANCTIONED', 'COMPLETED', 'REJECTED'];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ success: false, message: `Invalid status '${status}'. Must be one of: ${validStatuses.join(', ')}` });
+    }
+
+    const previousStatus = complaint.status;
+    complaint.status = status;
+    if (message) complaint.staffNotes = message;
+
+    // Reset status flags if reverted back to PENDING
+    if (status === 'PENDING') {
+      complaint.isFraudFlagged = false;
+    }
+
+    await complaint.save();
+
+    // Create Audit Record
+    await StatusHistory.create({
+      complaint: complaint._id,
+      fromStatus: previousStatus,
+      toStatus: status,
+      actor: req.user._id,
+      actorRole: req.user.role,
+      actorName: `${req.user.name} (System Administrator)`,
+      message: message || `Admin authority status override: Changed from ${previousStatus} to ${status}.`
+    });
+
+    // Real-time Socket.IO Broadcast
+    try {
+      const { getIO } = require('../config/socket');
+      const io = getIO();
+      const citizenId = complaint.citizen?._id || complaint.citizen;
+      io.to(`citizen_${citizenId}`).emit('complaint:updated', complaint);
+      io.to(`jurisdiction_${complaint.jurisdictionId}`).emit('complaint:updated', complaint);
+      io.to(`complaint_${complaint._id}`).emit('complaint:updated', complaint);
+      io.to('admin_global').emit('complaint:updated', complaint);
+    } catch (e) {
+      console.warn('[Socket.IO Emit Warning]:', e.message);
+    }
+
+    res.json({
+      success: true,
+      message: `Complaint ${complaint.complaintId} status override successful: Changed from ${previousStatus} to ${status}.`,
+      complaint
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Admin Delete Complaint Permanently
+// @route   DELETE /api/admin/complaint/:id
+const adminDeleteComplaint = async (req, res) => {
+  try {
+    const complaint = await Complaint.findById(req.params.id);
+    if (!complaint) {
+      return res.status(404).json({ success: false, message: 'Complaint not found.' });
+    }
+
+    const deletedId = complaint.complaintId;
+    const citizenId = complaint.citizen;
+
+    await Complaint.findByIdAndDelete(req.params.id);
+    await StatusHistory.deleteMany({ complaint: req.params.id });
+
+    // Socket.IO Emit
+    try {
+      const { getIO } = require('../config/socket');
+      const io = getIO();
+      io.to(`citizen_${citizenId}`).emit('complaint:updated', { _id: req.params.id, status: 'DELETED' });
+      io.to('admin_global').emit('complaint:updated', { _id: req.params.id, status: 'DELETED' });
+    } catch (e) {}
+
+    res.json({
+      success: true,
+      message: `Complaint ${deletedId} has been permanently deleted from the system.`
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Get all direct citizen applications to Admin
+// @route   GET /api/admin/applications
+const getDirectApplications = async (req, res) => {
+  try {
+    const applications = await CitizenApplication.find({})
+      .populate('citizen', 'name email mobile address')
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      count: applications.length,
+      applications
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Admin marks a citizen application as VIEWED
+// @route   PUT /api/admin/applications/:id/view
+const markApplicationViewed = async (req, res) => {
+  try {
+    const application = await CitizenApplication.findById(req.params.id);
+    if (!application) {
+      return res.status(404).json({ success: false, message: 'Application not found.' });
+    }
+
+    application.status = 'VIEWED';
+    application.viewedAt = new Date();
+    application.viewedBy = req.user._id;
+
+    await application.save();
+
+    // Socket.IO Broadcast to Citizen
+    try {
+      const { getIO } = require('../config/socket');
+      const io = getIO();
+      io.to(`citizen_${application.citizen}`).emit('application:viewed', application);
+    } catch (e) {}
+
+    res.json({
+      success: true,
+      message: `Application for Complaint #${application.complaintNumber} marked as VIEWED.`,
+      application
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   createStaff,
   getStaffList,
   toggleStaffStatus,
   deleteStaff,
   resetStaffPassword,
-  getPanchayatAnalytics
+  getPanchayatAnalytics,
+  searchComplaintByNumber,
+  adminUpdateComplaintStatus,
+  adminDeleteComplaint,
+  getDirectApplications,
+  markApplicationViewed
 };

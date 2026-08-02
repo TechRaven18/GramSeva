@@ -9,12 +9,16 @@ const {
   addComment,
   overridePriority,
   getFlaggedComplaints,
-  reviewFraudComplaint
+  reviewFraudComplaint,
+  createDirectApplication,
+  getMyDirectApplications
 } = require('../controllers/complaintController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 const upload = require('../middleware/uploadMiddleware');
 
 router.post('/', protect, upload.array('images', 3), createComplaint);
+router.post('/direct-application', protect, createDirectApplication);
+router.get('/my-direct-applications', protect, getMyDirectApplications);
 router.get('/my', protect, getCitizenComplaints);
 router.get('/staff-queue', protect, authorize('STAFF', 'ADMIN'), getStaffQueue);
 router.get('/flagged', protect, authorize('STAFF', 'ADMIN'), getFlaggedComplaints);

@@ -603,6 +603,67 @@ const reviewFraudComplaint = async (req, res) => {
   }
 };
 
+// @desc    Citizen submits direct text application to Admin
+// @route   POST /api/complaints/direct-application
+const createDirectApplication = async (req, res) => {
+  try {
+    const { complaintNumber, issue } = req.body;
+
+    if (!complaintNumber || !issue) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide both Complaint Number and Issue description.'
+      });
+    }
+
+    const CitizenApplication = require('../models/CitizenApplication');
+    const appId = `APP-${Date.now().toString().slice(-6)}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    const application = await CitizenApplication.create({
+      applicationId: appId,
+      citizen: req.user._id,
+      citizenName: req.user.name,
+      citizenEmail: req.user.email,
+      complaintNumber: complaintNumber.trim(),
+      issue: issue.trim(),
+      status: 'PENDING_REVIEW'
+    });
+
+    // Real-time Socket.IO Broadcast to Admin
+    try {
+      const { getIO } = require('../config/socket');
+      const io = getIO();
+      io.to('admin_global').emit('application:created', application);
+    } catch (e) {}
+
+    return res.status(201).json({
+      success: true,
+      message: 'Your direct text application has been submitted to System Admin successfully!',
+      application
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// @desc    Get logged in citizen's direct text applications to Admin
+// @route   GET /api/complaints/my-direct-applications
+const getMyDirectApplications = async (req, res) => {
+  try {
+    const CitizenApplication = require('../models/CitizenApplication');
+    const applications = await CitizenApplication.find({ citizen: req.user._id })
+      .sort({ createdAt: -1 });
+
+    return res.json({
+      success: true,
+      count: applications.length,
+      applications
+    });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   createComplaint,
   getCitizenComplaints,
@@ -612,5 +673,8 @@ module.exports = {
   addComment,
   overridePriority,
   getFlaggedComplaints,
-  reviewFraudComplaint
+  reviewFraudComplaint,
+  createDirectApplication,
+  getMyDirectApplications
 };
+
