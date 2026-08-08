@@ -277,6 +277,231 @@ export default function AdminDashboard() {
           </div>
         </div>
 
+        {/* ============================
+            CREATE STAFF MODAL
+        =============================== */}
+        {showCreateModal && (
+          <div style={{
+            position: 'fixed', inset: 0, zIndex: 1000,
+            background: 'rgba(15, 23, 42, 0.75)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: '1rem'
+          }}>
+            <div style={{
+              width: '100%', maxWidth: '750px', maxHeight: '90vh',
+              overflowY: 'auto', background: '#ffffff',
+              borderRadius: '16px', border: '1px solid #cbd5e1',
+              boxShadow: '0 20px 25px -5px rgba(0,0,0,0.3), 0 8px 10px -6px rgba(0,0,0,0.2)',
+              position: 'relative'
+            }}>
+              {/* Modal Header */}
+              <div style={{
+                background: 'linear-gradient(135deg, #004071 0%, #1e3a8a 100%)',
+                padding: '1.25rem 1.75rem',
+                borderTopLeftRadius: '15px', borderTopRightRadius: '15px',
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+              }}>
+                <div>
+                  <div style={{ fontSize: '0.75rem', color: '#93c5fd', fontWeight: '800', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    Authority Staff Onboarding
+                  </div>
+                  <h3 style={{ fontSize: '1.35rem', color: '#ffffff', fontWeight: '800', margin: '0.2rem 0 0 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <UserPlus color="#60a5fa" size={22} /> Create Official Staff Account
+                  </h3>
+                </div>
+                <button
+                  onClick={() => setShowCreateModal(false)}
+                  style={{
+                    background: 'rgba(255,255,255,0.15)', color: '#ffffff',
+                    border: 'none', borderRadius: '50%', width: '32px', height: '32px',
+                    fontSize: '1rem', cursor: 'pointer', fontWeight: '700',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+
+              <div style={{ padding: '1.75rem' }}>
+                {createMsg && (
+                  <div style={{
+                    marginBottom: '1.25rem', padding: '0.85rem 1.1rem',
+                    background: createMsg.startsWith('✓') ? '#ecfdf5' : '#fef2f2',
+                    border: `1px solid ${createMsg.startsWith('✓') ? '#10b981' : '#f87171'}`,
+                    color: createMsg.startsWith('✓') ? '#047857' : '#b91c1c',
+                    borderRadius: '8px', fontSize: '0.9rem', fontWeight: '600'
+                  }}>{createMsg}</div>
+                )}
+
+                <form onSubmit={handleCreateStaff}>
+                  {/* Basic Staff Details */}
+                  <div style={{ marginBottom: '1.25rem' }}>
+                    <div style={{ color: '#004071', fontWeight: '800', fontSize: '0.85rem', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                      Staff Details
+                    </div>
+                    <div className="grid-2">
+                      <div className="form-group">
+                        <label className="form-label" style={{ color: '#334155', fontWeight: '700' }}>Staff Full Name *</label>
+                        <input type="text" className="form-input" style={{ border: '1px solid #cbd5e1', background: '#f8fafc', color: '#0f172a' }} placeholder="e.g. Suresh Kumar Prasad" value={staffName} onChange={e => setStaffName(e.target.value)} required />
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label" style={{ color: '#334155', fontWeight: '700' }}>Email Address (Username / User ID) *</label>
+                        <input type="email" className="form-input" style={{ border: '1px solid #cbd5e1', background: '#f8fafc', color: '#0f172a' }} placeholder="staff@gramseva.in" value={staffEmail} onChange={e => setStaffEmail(e.target.value)} required />
+                      </div>
+                    </div>
+                    <div className="grid-2">
+                      <div className="form-group">
+                        <label className="form-label" style={{ color: '#334155', fontWeight: '700' }}>Mobile Phone Number</label>
+                        <input type="tel" className="form-input" style={{ border: '1px solid #cbd5e1', background: '#f8fafc', color: '#0f172a' }} placeholder="e.g. 9876543210" value={staffMobile} onChange={e => setStaffMobile(e.target.value)} />
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label" style={{ color: '#334155', fontWeight: '700' }}>Initial Password *</label>
+                        <input type="text" className="form-input" style={{ border: '1px solid #cbd5e1', background: '#f8fafc', color: '#0f172a' }} value={staffPassword} onChange={e => setStaffPassword(e.target.value)} required />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Jurisdiction Assignment - Hierarchical */}
+                  <div style={{ marginBottom: '1.5rem' }}>
+                    <div style={{ color: '#004071', fontWeight: '800', fontSize: '0.85rem', marginBottom: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <MapPin size={14} /> Assign Jurisdiction Area *
+                    </div>
+
+                    {loadingJur ? (
+                      <div style={{ padding: '1.5rem', textAlign: 'center', color: '#64748b', background: '#f8fafc', borderRadius: '8px', border: '1px solid #cbd5e1' }}>
+                        <RefreshCw size={20} style={{ animation: 'spin 1s linear infinite', marginRight: '0.5rem' }} />
+                        Loading jurisdictions...
+                      </div>
+                    ) : jurError ? (
+                      <div style={{ padding: '1rem', color: '#b91c1c', background: '#fef2f2', borderRadius: '8px', border: '1px solid #f87171', fontSize: '0.9rem' }}>
+                        ❌ {jurError}
+                      </div>
+                    ) : (
+                      <div style={{ background: '#f8fafc', borderRadius: '10px', border: '1px solid #cbd5e1', padding: '1rem' }}>
+
+                        {/* Step 1: District */}
+                        <div className="form-group">
+                          <label className="form-label" style={{ fontSize: '0.8rem', color: '#334155', fontWeight: '700' }}>Step 1 — Select District</label>
+                          <select className="form-select" style={{ border: '1px solid #cbd5e1', background: '#ffffff', color: '#0f172a' }} value={filterDistrict} onChange={e => {
+                            setFilterDistrict(e.target.value);
+                            setFilterBlock('');
+                            setSelectedJurisdictionId('');
+                          }}>
+                            <option value="">-- All Districts ({uniqueDistricts.length} available) --</option>
+                            {uniqueDistricts.map(d => (
+                              <option key={d} value={d}>{d}</option>
+                            ))}
+                          </select>
+                        </div>
+
+                        {/* Step 2: Block (only shown after district selected) */}
+                        {filterDistrict && (
+                          <div className="form-group">
+                            <label className="form-label" style={{ fontSize: '0.8rem', color: '#334155', fontWeight: '700' }}>Step 2 — Select Block / Municipality</label>
+                            <select className="form-select" style={{ border: '1px solid #cbd5e1', background: '#ffffff', color: '#0f172a' }} value={filterBlock} onChange={e => {
+                              setFilterBlock(e.target.value);
+                              setSelectedJurisdictionId('');
+                            }}>
+                              <option value="">-- All Blocks in {filterDistrict} --</option>
+                              {uniqueBlocks.map(b => (
+                                <option key={b} value={b}>{b}</option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
+
+                        {/* Search */}
+                        <div className="form-group" style={{ position: 'relative' }}>
+                          <label className="form-label" style={{ fontSize: '0.8rem', color: '#334155', fontWeight: '700' }}>
+                            Step {filterDistrict ? '3' : '2'} — Search & Select Panchayat / Ward *
+                          </label>
+                          <div style={{ position: 'relative' }}>
+                            <Search size={14} style={{ position: 'absolute', left: '0.75rem', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
+                            <input
+                              type="text"
+                              className="form-input"
+                              style={{ paddingLeft: '2.25rem', border: '1px solid #cbd5e1', background: '#ffffff', color: '#0f172a' }}
+                              placeholder="Type to search panchayat / ward name..."
+                              value={searchTerm}
+                              onChange={e => setSearchTerm(e.target.value)}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Panchayat list */}
+                        <div style={{ maxHeight: '200px', overflowY: 'auto', borderRadius: '8px', border: '1px solid #cbd5e1', background: '#ffffff' }}>
+                          {filteredJurisdictions.length === 0 ? (
+                            <div style={{ padding: '1.5rem', textAlign: 'center', color: '#64748b', fontSize: '0.85rem' }}>
+                              No jurisdictions found. Try a different filter.
+                            </div>
+                          ) : (
+                            filteredJurisdictions.map(j => (
+                              <div
+                                key={j._id}
+                                onClick={() => setSelectedJurisdictionId(j._id)}
+                                style={{
+                                  padding: '0.75rem 1rem',
+                                  cursor: 'pointer',
+                                  borderBottom: '1px solid #e2e8f0',
+                                  background: selectedJurisdictionId === j._id ? '#e0f2fe' : 'transparent',
+                                  borderLeft: selectedJurisdictionId === j._id ? '4px solid #004071' : '4px solid transparent',
+                                  boxShadow: selectedJurisdictionId === j._id ? '0 1px 3px rgba(0,0,0,0.06)' : 'none',
+                                  transition: 'all 0.15s ease'
+                                }}
+                              >
+                                <div style={{ fontWeight: selectedJurisdictionId === j._id ? '800' : '600', color: selectedJurisdictionId === j._id ? '#0f172a' : '#334155', fontSize: '0.925rem' }}>
+                                  {j.panchayat}
+                                </div>
+                                <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '0.1rem' }}>
+                                  📍 {j.block} · {j.district} &nbsp;
+                                  <span style={{
+                                    fontSize: '0.7rem', padding: '0.1rem 0.4rem',
+                                    borderRadius: '3px', fontWeight: '700',
+                                    background: j.type === 'MUNICIPALITY' ? '#fef3c7' : '#e0f2fe',
+                                    color: j.type === 'MUNICIPALITY' ? '#b45309' : '#0369a1'
+                                  }}>{j.type}</span>
+                                </div>
+                              </div>
+                            ))
+                          )}
+                        </div>
+
+                        {/* Selected jurisdiction display */}
+                        {selectedJur && (
+                          <div style={{
+                            marginTop: '0.85rem', padding: '0.85rem 1.1rem',
+                            background: '#ffffff', borderRadius: '10px',
+                            border: '2px solid #004071', color: '#0f172a',
+                            boxShadow: '0 2px 6px rgba(0,0,0,0.08)'
+                          }}>
+                            <div style={{ fontSize: '0.8rem', color: '#004071', fontWeight: '800', marginBottom: '0.2rem', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                              <CheckCircle2 size={16} color="#059669" /> Selected Jurisdiction Area:
+                            </div>
+                            <div style={{ fontWeight: '900', fontSize: '1.05rem', color: '#0f172a' }}>{selectedJur.panchayat}</div>
+                            <div style={{ fontSize: '0.85rem', color: '#475569', fontWeight: '600', marginTop: '0.15rem' }}>
+                              📍 Block: <b>{selectedJur.block}</b> · District: <b>{selectedJur.district}</b> ({selectedJur.type})
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '0.75rem' }}>
+                    <button type="submit" className="btn btn-primary" disabled={!selectedJurisdictionId} style={{ fontWeight: '700' }}>
+                      <UserPlus size={16} /> Create Staff Account
+                    </button>
+                    <button type="button" onClick={() => setShowCreateModal(false)} className="btn btn-secondary" style={{ fontWeight: '700' }}>
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* System Overview Metrics */}
         <div className="grid-4" style={{ marginBottom: '1.75rem' }}>
           <div style={{ background: '#ffffff', border: '1px solid #cbd5e1', padding: '1.1rem 1.25rem', borderRadius: '10px', boxShadow: '0 2px 4px rgba(0,0,0,0.03)' }}>
@@ -597,6 +822,9 @@ export default function AdminDashboard() {
               <h3 style={{ fontSize: '1.15rem', color: '#004071', fontWeight: '800', margin: 0 }}>
                 Staff Directory ({filteredStaffList.length} Accounts)
               </h3>
+              <button onClick={handleOpenModal} className="btn btn-primary" style={{ fontSize: '0.85rem', padding: '0.5rem 1rem' }}>
+                <UserPlus size={15} /> Create Staff Account
+              </button>
             </div>
 
             <div style={{ marginBottom: '1.1rem', position: 'relative' }}>
