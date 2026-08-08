@@ -50,7 +50,7 @@ export default function Footer() {
                 <Phone size={16} color="#34d399" /> <strong>Toll-Free Helpline:</strong> +91-8391842765 / +91-7880852459
               </div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <MapPin size={16} color="#fbbf24" /> Department of Rural & Local Governance, Block Bhavan
+                <MapPin size={16} color="#fbbf24" /> First Floor , P. D. Tondon Hostel, MNNIT Allahabad, Teliyarganj, Prayagraj, 211004
               </div>
             </div>
           </div>
